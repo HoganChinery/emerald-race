@@ -133,9 +133,20 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .vote-btn .cta { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--side); }
 
 /* Champion renders: fixed at the sides on wide screens, flanking the title otherwise */
-.side-art { position: fixed; bottom: 2vh; height: min(80vh, 940px); width: calc((100vw - 880px) / 2 - 80px); object-fit: contain; object-position: bottom; pointer-events: none; z-index: 0; filter: drop-shadow(0 10px 24px rgba(0,0,0,.6)); animation: breathe 5s ease-in-out infinite; }
-.side-art.left { left: 16px; object-position: bottom right; }
-.side-art.right { right: 16px; object-position: bottom left; animation-delay: -2.5s; }
+.side-art { position: fixed; bottom: 4vh; height: min(68vh, 760px, calc(((100vw - 880px) / 2 - 90px) * 1.25)); aspect-ratio: 4 / 5; pointer-events: none; z-index: 0; animation: breathe 5s ease-in-out infinite; }
+.side-art.left { right: calc(50% + 500px); }
+.side-art.right { left: calc(50% + 500px); animation-delay: -2.5s; }
+.side-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 24px rgba(0,0,0,.6)); animation: powershake .09s steps(2) infinite; }
+.side-art.left img { object-position: bottom center; }
+.side-art.right img { object-position: bottom center; }
+.side-art canvas { position: absolute; left: -60px; right: -60px; top: -140px; bottom: 0; width: calc(100% + 120px); height: calc(100% + 140px); }
+.side-art.surge img { animation-name: powersurge; }
+@keyframes powershake { 0% { transform: translate(0, 0); } 50% { transform: translate(.6px, -.6px); } 100% { transform: translate(-.6px, .4px); } }
+@keyframes powersurge { 0% { transform: translate(-2px, 1px); } 50% { transform: translate(2px, -2px); } 100% { transform: translate(-1px, 2px); } }
+.hero-art.left { animation: aura-blue 1.4s ease-in-out infinite; }
+.hero-art.right { animation: aura-red 1.4s ease-in-out infinite -.7s; }
+@keyframes aura-blue { 0%, 100% { filter: drop-shadow(0 0 4px #5cc8ff) drop-shadow(0 0 10px #3fa7e0); } 50% { filter: drop-shadow(0 0 8px #bfeaff) drop-shadow(0 0 20px #3fa7e0); } }
+@keyframes aura-red { 0%, 100% { filter: drop-shadow(0 0 4px #ff6a7d) drop-shadow(0 0 10px #e84057); } 50% { filter: drop-shadow(0 0 8px #ffd0d6) drop-shadow(0 0 20px #e84057); } }
 .wrap { position: relative; z-index: 1; }
 .hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2.6fr) minmax(0,1fr); grid-template-areas: "l h r"; align-items: end; gap: 8px; }
 .hero > header { grid-area: h; min-width: 0; }
@@ -148,7 +159,7 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 @media (min-width: 1280px) { .hero { display: block; } }
 @media (max-width: 1279px) { .side-art { display: none; } .hero-art { display: block; } }
 @media (max-width: 600px) { .hero { grid-template-columns: minmax(0,1fr) minmax(0,1fr); grid-template-areas: "l r" "h h"; } .hero-art { height: 170px; } .hero-art.left { object-position: bottom center; } .hero-art.right { object-position: bottom center; } }
-@media (prefers-reduced-motion: reduce) { .side-art { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .side-art, .side-art img, .hero-art.left, .hero-art.right { animation: none; } }
 
 footer { text-align: center; color: var(--muted); font-size: 14px; }
 .legal { max-width: 70ch; margin: 10px auto 0; font-size: 12px; opacity: .75; text-wrap: balance; }
@@ -160,8 +171,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
-<img class="side-art left" src="img/syrio-fiora.png" alt="Syrio Forel as Fiora">
-<img class="side-art right" src="img/curry-lissandra.png" alt="AD Curry as Lissandra">
+<div class="side-art left" data-aura="#3fa7e0" data-hot="#bfeaff"><canvas aria-hidden="true"></canvas><img src="img/syrio-fiora.png" alt="Syrio Forel as Fiora"></div>
+<div class="side-art right" data-aura="#e84057" data-hot="#ffd0d6"><canvas aria-hidden="true"></canvas><img src="img/curry-lissandra.png" alt="AD Curry as Lissandra"></div>
 <div class="wrap">
   <div class="hero">
     <img class="hero-art left" src="img/syrio-fiora.png" alt="">
@@ -389,6 +400,91 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   const upd = data.updated ? new Date(data.updated) : null;
   $("footer").innerHTML = (upd ? `Last checked ${upd.toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}` : "Not checked yet")
     + ` · Rank data from ${P.some(p => p.source === "riot") ? "Riot Games" : "op.gg"}`;
+  // Power-up auras: flames rise off each fighter's silhouette, with a pulsing glow and the odd lightning crackle
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll(".side-art").forEach(box => {
+    const img = box.querySelector("img"), cv = box.querySelector("canvas"), ctx = cv.getContext("2d");
+    const color = box.dataset.aura, hot = box.dataset.hot, PADX = 60, PADT = 140;
+    let edges = [], glow = null, parts = [], bolt = null, nextBolt = 90, frame = 0, rect = null;
+    const sprite = (c1, c2) => {
+      const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+      const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, c1); gr.addColorStop(.35, c2); gr.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return c;
+    };
+    const flame = sprite(hot, color), core = sprite("#ffffff", hot);
+    function prep() {
+      const h = 260, w = Math.round(img.naturalWidth * h / img.naturalHeight);
+      const off = document.createElement("canvas"); off.width = w; off.height = h;
+      const o = off.getContext("2d"); o.drawImage(img, 0, 0, w, h);
+      try {
+        const d = o.getImageData(0, 0, w, h).data, A = (x, y) => (x < 0 || y < 0 || x >= w || y >= h) ? 0 : d[(y * w + x) * 4 + 3];
+        for (let y = 0; y < h; y += 2) for (let x = 0; x < w; x += 2)
+          if (A(x, y) > 128 && (A(x - 3, y) < 64 || A(x + 3, y) < 64 || A(x, y - 3) < 64)) edges.push([x / w, y / h]);
+      } catch (e) {}
+      if (!edges.length) for (let i = 0; i < 200; i++) edges.push([Math.random(), Math.random() * .9]);
+      // colored silhouette, blurred once up front, redrawn each frame as the glow
+      glow = document.createElement("canvas"); const gw = w * 2 + 80, gh = h * 2 + 80;
+      glow.width = gw; glow.height = gh; const gg = glow.getContext("2d");
+      const tint = document.createElement("canvas"); tint.width = w * 2; tint.height = h * 2;
+      const tg = tint.getContext("2d"); tg.drawImage(img, 0, 0, w * 2, h * 2);
+      tg.globalCompositeOperation = "source-in"; tg.fillStyle = color; tg.fillRect(0, 0, w * 2, h * 2);
+      gg.shadowColor = color; gg.shadowBlur = 30; gg.drawImage(tint, 40, 40); gg.drawImage(tint, 40, 40);
+      layout(); requestAnimationFrame(tick);
+    }
+    function layout() {
+      const bw = box.clientWidth, bh = box.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
+      cv.width = (bw + PADX * 2) * dpr; cv.height = (bh + PADT) * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const sc = Math.min(bw / img.naturalWidth, bh / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
+      rect = { x: PADX + (bw - dw) / 2, y: PADT + bh - dh, w: dw, h: dh };
+    }
+    function tick() {
+      requestAnimationFrame(tick);
+      if (!box.offsetParent && getComputedStyle(box).display === "none") return;
+      frame++;
+      const W = cv.width, H = cv.height, r = rect, t = frame / 60;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+      ctx.setTransform(Math.min(devicePixelRatio || 1, 2), 0, 0, Math.min(devicePixelRatio || 1, 2), 0, 0);
+      ctx.globalCompositeOperation = "lighter";
+      // pulsing silhouette glow
+      const pulse = .5 + .5 * Math.sin(t * 5), grow = 1.04 + .03 * pulse;
+      const gx = 40 / (glow.width - 80) * r.w * 2, gy = 40 / (glow.height - 80) * r.h * 2;
+      ctx.globalAlpha = .35 + .3 * pulse;
+      ctx.drawImage(glow, r.x + r.w / 2 - (r.w / 2 + gx / 2) * grow, r.y + r.h - (r.h + gy / 2) * grow - 6, (r.w + gx) * grow, (r.h + gy) * grow);
+      if (calm) return;
+      // spawn flames from the silhouette edge, pushed outward from the body's center line
+      for (let i = 0; i < 7; i++) {
+        const e = edges[(Math.random() * edges.length) | 0], x = r.x + e[0] * r.w, y = r.y + e[1] * r.h;
+        const out = Math.sign(e[0] - .5) || 1, life = 28 + Math.random() * 34;
+        parts.push({ x, y, vx: out * (.3 + Math.random() * .9) + (Math.random() - .5) * .6, vy: -(1.6 + Math.random() * 3.2), life, max: life, s: 10 + Math.random() * 16 });
+      }
+      parts = parts.filter(q => (q.life -= 1) > 0);
+      for (const q of parts) {
+        q.x += q.vx; q.y += q.vy; q.vy *= .985; q.vx *= .97;
+        const k = q.life / q.max, s = q.s * (.5 + k * .7);
+        ctx.globalAlpha = k * .55; ctx.drawImage(flame, q.x - s / 2, q.y - s, s, s * 2.1);
+        if (k > .6) { ctx.globalAlpha = (k - .6) * 1.2; ctx.drawImage(core, q.x - s / 4, q.y - s / 2, s / 2, s); }
+      }
+      // lightning: a jagged bolt every few seconds, with a harder shake while it flashes
+      if (--nextBolt <= 0) {
+        const e = edges[(Math.random() * edges.length) | 0];
+        let x = r.x + e[0] * r.w, y = r.y + e[1] * r.h * .7; const pts = [[x, y]];
+        for (let i = 0; i < 7; i++) { x += (Math.random() - .5) * 46; y -= 10 + Math.random() * 22; pts.push([x, y]); }
+        bolt = { pts, life: 7 }; nextBolt = 100 + Math.random() * 200; box.classList.add("surge");
+      }
+      if (bolt) {
+        ctx.globalAlpha = bolt.life / 7; ctx.globalCompositeOperation = "source-over";
+        ctx.shadowColor = color; ctx.shadowBlur = 16; ctx.strokeStyle = "#fff"; ctx.lineWidth = 2.2; ctx.lineJoin = "round";
+        ctx.beginPath(); bolt.pts.forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)); ctx.stroke();
+        ctx.shadowBlur = 0;
+        if (--bolt.life <= 0) { bolt = null; box.classList.remove("surge"); }
+      }
+      ctx.globalAlpha = 1;
+    }
+    addEventListener("resize", () => glow && layout());
+    img.complete && img.naturalWidth ? prep() : img.addEventListener("load", prep, { once: true });
+  });
+
   $("footer").insertAdjacentHTML("beforeend", `<p class="legal">First to Emerald isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>`);
 })();
 </script>
