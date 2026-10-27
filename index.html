@@ -148,12 +148,39 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 
 /* Oracle + vote */
 .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-.oracle .pick { display: flex; gap: 14px; align-items: center; }
-.oracle .pick img { width: 72px; height: 72px; flex: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
-.oracle .pick-label { font: 600 12px var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-.oracle .pick-name { font: 700 24px/1.1 var(--display); }
-.oracle .headline { font: 600 20px/1.3 var(--body); margin: 16px 0 8px; text-wrap: balance; }
-.oracle p { margin: 0 0 12px; color: #c9c3b4; max-width: 62ch; }
+/* The Oracle: a hextech seer. Teal arcane frame, crystal orb holding the chosen one, rune ring, engraved prophecy */
+.frame.oracle { --arc: #0ac8b9; border-color: #1c6b73; background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(10,200,185,.14), transparent 70%), linear-gradient(180deg, rgba(10,24,34,.96), rgba(8,18,28,.96)); box-shadow: 0 0 24px rgba(10,200,185,.12) inset, 0 0 18px rgba(10,200,185,.1); overflow: hidden; }
+.frame.oracle::before { border-color: rgba(10,200,185,.18); }
+.oracle .sigil { position: absolute; right: -90px; top: -90px; width: 300px; height: 300px; opacity: .1; animation: spin 90s linear infinite; pointer-events: none; }
+.oracle h2 { color: var(--arc); display: flex; align-items: center; gap: 10px; }
+.oracle h2::before, .oracle h2::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(10,200,185,.5)); }
+.oracle h2::after { transform: scaleX(-1); }
+.seer { display: grid; justify-items: center; text-align: center; gap: 4px; position: relative; }
+.orb { position: relative; width: 150px; height: 150px; display: grid; place-items: center; margin: 4px 0 6px; }
+.orb .ring { position: absolute; inset: 0; animation: spin 24s linear infinite; }
+.orb .ring text { font: 600 9.5px var(--display); letter-spacing: 2.4px; fill: rgba(10,200,185,.85); }
+.orb .ring2 { position: absolute; inset: 14px; border-radius: 50%; border: 1px dashed rgba(200,170,110,.45); animation: spin 40s linear infinite reverse; }
+.orb .glass { position: relative; width: 96px; height: 96px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(140,240,230,.25) 18%, rgba(10,120,140,.55) 55%, rgba(3,30,45,.95) 100%);
+  box-shadow: 0 0 22px var(--chosen), 0 0 48px rgba(10,200,185,.45), inset 0 0 18px rgba(0,0,0,.6); animation: orbpulse 3.2s ease-in-out infinite; }
+.orb .glass img { width: 92%; height: 92%; object-fit: contain; margin-top: 10%; filter: drop-shadow(0 0 6px var(--chosen)); animation: float 4s ease-in-out infinite; }
+.orb .glass::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.5), transparent 28%); }
+.seer .seer-by { font: 600 11px var(--body); letter-spacing: .2em; text-transform: uppercase; color: var(--arc); }
+.seer .chosen { font: 800 26px/1.1 var(--display); letter-spacing: .03em; }
+.seer .chosen-label { font: 600 11px var(--body); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.prophecy { margin: 14px 0 10px; padding: 14px 16px; border-top: 1px solid rgba(200,170,110,.35); border-bottom: 1px solid rgba(200,170,110,.35); position: relative; }
+.prophecy::before, .prophecy::after { content: "❖"; position: absolute; left: 50%; transform: translate(-50%, -50%); top: 0; color: var(--gold); font-size: 12px; background: #0a1822; padding: 0 8px; }
+.prophecy::after { top: 100%; }
+.prophecy q { display: block; font: 700 20px/1.35 var(--display); text-align: center; text-wrap: balance; background: linear-gradient(180deg, #f6edd9, var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; quotes: "“" "”"; }
+.reading-label { font: 600 11px var(--body); letter-spacing: .2em; text-transform: uppercase; color: var(--arc); margin: 6px 0 4px; }
+.oracle p { margin: 0 0 12px; color: #c9d6d8; max-width: 62ch; }
+.fate { position: relative; height: 12px; display: flex; border: 1px solid #1c6b73; background: #06121a; }
+.fate > span { height: 100%; }
+.fate .gem { position: absolute; top: 50%; width: 14px; height: 14px; transform: translate(-50%, -50%) rotate(45deg); background: #e9fffb; box-shadow: 0 0 10px var(--arc), 0 0 2px #fff; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes orbpulse { 50% { box-shadow: 0 0 30px var(--chosen), 0 0 64px rgba(10,200,185,.6), inset 0 0 18px rgba(0,0,0,.6); } }
+@keyframes float { 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .oracle .sigil, .orb .ring, .orb .ring2, .orb .glass, .orb .glass img { animation: none; } }
 .meter { height: 10px; background: #08121d; border: 1px solid var(--line); display: flex; }
 .meter > span { display: block; height: 100%; transition: width .8s ease; }
 .meter-legend { display: flex; justify-content: space-between; gap: 8px; font: 600 14px var(--body); font-variant-numeric: tabular-nums; margin-top: 6px; }
@@ -269,7 +296,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
   <div class="duo">
     <section class="frame oracle" aria-labelledby="oracle-h">
-      <h2 id="oracle-h">The Oracle predicts</h2>
+      <svg class="sigil" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#0ac8b9" stroke-width=".6"><circle cx="50" cy="50" r="48"/><circle cx="50" cy="50" r="38"/><circle cx="50" cy="50" r="20"/><path d="M50 2 L91.6 74 L8.4 74 Z M50 98 L8.4 26 L91.6 26 Z"/><path d="M50 12 V88 M12 50 H88"/></g></svg>
+      <h2 id="oracle-h">The Oracle</h2>
       <div id="oracle"><p class="empty-note">The Oracle hasn't read the stats yet. Its first prediction shows up after the next update.</p></div>
     </section>
     <section class="frame" aria-labelledby="vote-h">
@@ -387,6 +415,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     "The rank says {rank}. The aura says Challenger.",
     "Every team he's on is a better team. That's just science.",
     "Captain of the Silver Scoundrels. Naturally.",
+    "The Silver Scoundrels have a captain, and his name is thebuntos.",
+    "Silver Scoundrel by blood. GOAT by destiny.",
     "The Scoundrels follow him into every teamfight. Correctly.",
   ];
   const SCOUNDREL = [
@@ -432,7 +462,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
       return `<article class="tale ${goat ? "goat" : "scoundrel"}">
         ${g.icon ? `<img src="${esc(g.icon)}" alt="${esc(g.main || "")}">` : "<span></span>"}
         <div style="min-width:0">
-          <div class="t-name">${goat ? "👑 " : ""}${esc(g.name)} <span>#${esc(g.tag)}</span>${goat ? '<span class="badge goat">The GOAT</span>' : '<span class="badge silver">Silver Scoundrel</span>'}</div>
+          <div class="t-name">${goat ? "👑 " : ""}${esc(g.name)} <span>#${esc(g.tag)}</span>${goat ? '<span class="badge goat">The GOAT</span>' : ""}<span class="badge silver">Silver Scoundrel</span></div>
           <div class="t-rank">${rank} · ${g.wins}W ${g.losses}L (${wr}%)</div>
           <div class="t-note" data-guest="${i}">${esc(nextNote(g))}</div>
         </div>
@@ -516,20 +546,31 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     const w = P.find(p => p.name === pr.winner) || P[0], other = P.find(p => p !== w);
     const when = new Date(pr.t).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
     $("oracle").innerHTML = `
-      <div class="pick"><img src="${esc(w.photo || w.icon)}" alt="">
-        <div><div class="pick-label">Predicted winner</div><div class="pick-name" style="color:${SIDE[w.side]}">${esc(w.name)}</div></div></div>
-      <div class="headline">“${esc(pr.headline)}”</div>
+      <div class="seer" style="--chosen:${SIDE[w.side]}">
+        <div class="seer-by">Claude · Seer of the Rift</div>
+        <div class="orb">
+          <svg class="ring" viewBox="0 0 150 150" aria-hidden="true"><defs><path id="runepath" d="M75,75 m-66,0 a66,66 0 1,1 132,0 a66,66 0 1,1 -132,0"/></defs>
+            <text><textPath href="#runepath">✦ THE RIFT REMEMBERS ✦ ALL PATHS LEAD TO EMERALD ✦ THE ORACLE HAS SPOKEN ✦</textPath></text></svg>
+          <div class="ring2"></div>
+          <div class="glass"><img src="${esc(w.photo || w.icon)}" alt=""></div>
+        </div>
+        <div class="chosen-label">The chosen one</div>
+        <div class="chosen" style="color:${SIDE[w.side]}">${esc(w.name)}</div>
+      </div>
+      <div class="prophecy"><q>${esc(pr.headline)}</q></div>
+      <div class="reading-label">The reading</div>
       <p>${esc(pr.reasoning)}</p>
-      <div class="meter" role="img" aria-label="${pr.confidence}% ${esc(w.name)}"><span style="width:${pr.confidence}%;background:${SIDE[w.side]}"></span><span style="width:${100 - pr.confidence}%;background:${SIDE[other.side]}"></span></div>
-      <div class="meter-legend"><span style="color:${SIDE[w.side]}">${pr.confidence}%</span><span style="color:${SIDE[other.side]}">${100 - pr.confidence}%</span></div>
-      <dl class="eta">${P.map(p => `<div class="stat"><dt>${esc(p.name)} ETA</dt><dd style="font-size:17px">${esc((pr.eta || {})[p.name] || "?")}</dd></div>`).join("")}</dl>
-      <p class="small" style="margin:12px 0 0">Claude's read of the op.gg stats · ${when}</p>`;
+      <div class="reading-label">Threads of fate</div>
+      <div class="fate" role="img" aria-label="${pr.confidence}% ${esc(w.name)}"><span style="width:${pr.confidence}%;background:linear-gradient(90deg, ${SIDE[w.side]}, color-mix(in srgb, ${SIDE[w.side]} 60%, #fff))"></span><span style="width:${100 - pr.confidence}%;background:${SIDE[other.side]};opacity:.55"></span><i class="gem" style="left:${pr.confidence}%"></i></div>
+      <div class="meter-legend"><span style="color:${SIDE[w.side]}">${esc(w.name)} ${pr.confidence}%</span><span style="color:${SIDE[other.side]}">${100 - pr.confidence}% ${esc(other.name)}</span></div>
+      <dl class="eta">${P.map(p => `<div class="stat"><dt>${esc(p.name)} arrives</dt><dd style="font-size:17px">${esc((pr.eta || {})[p.name] || "?")}</dd></div>`).join("")}</dl>
+      <p class="small" style="margin:12px 0 0">Prophecy sealed ${when} · read from the live Riot and op.gg stats</p>`;
     const old = data.prev_prediction;
     if (old) {
       const ow = P.find(p => p.name === old.winner) || P[0];
       const owhen = new Date(old.t).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
       $("oracle").insertAdjacentHTML("beforeend", `
-        <details class="prev-call"><summary>Previous call · ${esc(ow.name)} ${old.confidence}%</summary>
+        <details class="prev-call"><summary>Past prophecy · ${esc(ow.name)} ${old.confidence}%</summary>
           <div class="prev-body">
             <p><b style="color:${SIDE[ow.side]}">${esc(ow.name)}</b> at ${old.confidence}% · “${esc(old.headline)}”</p>
             <p class="small">${esc(old.reasoning)}</p>

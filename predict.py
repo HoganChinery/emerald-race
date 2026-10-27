@@ -40,6 +40,8 @@ def main():
             "season_record": f'{p["wins"]}W {p["losses"]}L',
             "top_champions_this_season": p.get("champs", []),
             "score_history_utc": [[h["t"][:16], h["s"]] for h in p.get("hist", [])][-40:],
+            "last_ranked_games": [{"win": g["win"], "champ": g["champ"], "kda": f'{g["k"]}/{g["d"]}/{g["a"]}'}
+                                  for g in p.get("recent", [])],
         } for p in data["players"]],
     }
     schema = {
@@ -47,7 +49,7 @@ def main():
         "properties": {
             "winner": {"type": "string", "enum": names},
             "confidence": {"type": "integer", "description": "Percent chance the winner gets there first, 50-95"},
-            "headline": {"type": "string", "description": "One punchy line, under 12 words, like a League caster"},
+            "headline": {"type": "string", "description": "The prophecy: one dramatic line, under 14 words"},
             "reasoning": {"type": "string", "description": "2-3 sentences citing the actual numbers"},
             "eta": {"type": "object", "properties": {n: {"type": "string"} for n in names},
                     "required": names, "additionalProperties": False,
@@ -63,10 +65,12 @@ def main():
         betas=["server-side-fallback-2026-07-01"],
         fallbacks="default",
         output_config={"effort": "medium", "format": {"type": "json_schema", "schema": schema}},
-        system=("You are the analyst for a friendly race between two League of Legends friends. "
-                "Predict who reaches Emerald first using only the stats given: distance to go, LP trend and "
-                "pace from the history, games played (activity), win rates, and champion pool. "
-                "Be playful but grounded; trash talk is welcome, nothing mean-spirited."),
+        system=("You are The Oracle of the Rift, an ancient hextech seer who watches over a ranked race between two "
+                "League of Legends friends to see who reaches Emerald first. Read the stats given (distance to go, LP "
+                "trend and pace from the history, recent games, games played, win rates, champion pool) and deliver "
+                "your verdict. The headline is a prophecy: grand, dramatic, a little unhinged, like a mystic who has "
+                "seen a thousand seasons, and it can roast. The reasoning stays grounded in the real numbers but keeps "
+                "the Oracle's voice (\"the Rift has shown me...\"). Trash talk is welcome, nothing mean-spirited."),
         messages=[{"role": "user", "content": json.dumps(facts)}],
     )
     if resp.stop_reason == "refusal":
