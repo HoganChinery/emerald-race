@@ -150,6 +150,9 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 /* the one behind: shrinks back, trembles, leans away from the leader */
 .side-art.cower img { transform-origin: 50% 100%; filter: drop-shadow(0 10px 24px rgba(0,0,0,.6)) brightness(.8) saturate(.75); animation: cower-l .16s ease-in-out infinite alternate; }
 .side-art.right.cower img { animation-name: cower-r; }
+.side-art canvas.front { z-index: 1; }
+.side-art.cower canvas { transform-origin: 50% 100%; animation: cower-l .16s ease-in-out infinite alternate; }
+.side-art.right.cower canvas { animation-name: cower-r; }
 @keyframes cower-l { from { transform: scale(.9) rotate(-4deg) translateX(-1.5px); } to { transform: scale(.89) rotate(-5deg) translateX(1.5px); } }
 @keyframes cower-r { from { transform: scale(.9) rotate(4deg) translateX(-1.5px); } to { transform: scale(.89) rotate(5deg) translateX(1.5px); } }
 .hero-art.cower { animation: none !important; filter: drop-shadow(0 6px 12px rgba(0,0,0,.6)) brightness(.8) saturate(.75); }
@@ -201,8 +204,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 <div class="rift" aria-hidden="true"></div>
 <div class="bubble left" id="bubble-blue" role="status" aria-live="polite"></div>
 <div class="bubble right" id="bubble-red" role="status" aria-live="polite"></div>
-<div class="side-art left" data-aura="#3fa7e0" data-hot="#bfeaff"><canvas aria-hidden="true"></canvas><img src="img/syrio-fiora.png" alt="Syrio Forel as Fiora"></div>
-<div class="side-art right" data-aura="#e84057" data-hot="#ffd0d6"><canvas aria-hidden="true"></canvas><img src="img/curry-lissandra.png" alt="AD Curry as Lissandra"></div>
+<div class="side-art left" data-aura="#3fa7e0" data-hot="#bfeaff" data-eyes="0.411,0.066,0.443,0.063"><canvas aria-hidden="true"></canvas><img src="img/syrio-fiora.png" alt="Syrio Forel as Fiora"><canvas class="front" aria-hidden="true"></canvas></div>
+<div class="side-art right" data-aura="#e84057" data-hot="#ffd0d6" data-eyes="0.537,0.048,0.569,0.048"><canvas aria-hidden="true"></canvas><img src="img/curry-lissandra.png" alt="AD Curry as Lissandra"><canvas class="front" aria-hidden="true"></canvas></div>
 <div class="wrap">
   <div class="hero">
     <img class="hero-art left" src="img/syrio-fiora.png" alt="">
@@ -443,8 +446,9 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   // Power-up auras: flames rise off each fighter's silhouette, with a pulsing glow and the odd lightning crackle
   const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.querySelectorAll(".side-art").forEach(box => {
-    const img = box.querySelector("img"), cv = box.querySelector("canvas"), ctx = cv.getContext("2d");
-    const color = box.dataset.aura, hot = box.dataset.hot, PADX = 60, PADT = 140;
+    const img = box.querySelector("img"), cv = box.querySelector("canvas:not(.front)"), ctx = cv.getContext("2d");
+    const fv = box.querySelector("canvas.front"), tc = fv.getContext("2d");
+    const color = box.dataset.aura, hot = box.dataset.hot, PADX = 60, PADT = 140, eyes = (box.dataset.eyes || "").split(",").map(Number).filter(n => !isNaN(n) && n > 0);
     let edges = [], glow = null, parts = [], sweat = [], bolt = null, nextBolt = 90, frame = 0, rect = null;
     const sprite = (c1, c2) => {
       const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
@@ -474,7 +478,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     }
     function layout() {
       const bw = box.clientWidth, bh = box.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
-      cv.width = (bw + PADX * 2) * dpr; cv.height = (bh + PADT) * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cv.width = fv.width = (bw + PADX * 2) * dpr; cv.height = fv.height = (bh + PADT) * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const sc = Math.min(bw / img.naturalWidth, bh / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
       rect = { x: PADX + (bw - dw) / 2, y: PADT + bh - dh, w: dw, h: dh };
     }
@@ -499,21 +503,35 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
         const out = Math.sign(e[0] - .5) || 1, life = 28 + Math.random() * 34;
         parts.push({ x, y, vx: out * (.3 + Math.random() * .9) + (Math.random() - .5) * .6, vy: -(1.6 + Math.random() * 3.2), life, max: life, s: 10 + Math.random() * 16 });
       }
-      // the one behind sweats instead: drops roll off the top of their head
-      if (!strong && frame % 14 === 0) {
-        const top = edges.filter(e => e[1] < .12), e = top[(Math.random() * top.length) | 0] || [.5, .05];
-        sweat.push({ x: r.x + e[0] * r.w, y: r.y + e[1] * r.h, vx: (Math.random() - .5) * 1.6, vy: -1.2, life: 70 });
+      // the one behind bawls: twin fountains of tears arcing out of each eye, plus wet streaks down the cheeks
+      if (!strong && eyes) {
+        const ex = [[eyes[0], eyes[1], -1], [eyes[2], eyes[3], 1]];
+        for (const [ex0, ey0, dir] of ex) {
+          const x = r.x + ex0 * r.w, y = r.y + ey0 * r.h;
+          if (frame % 2 === 0) sweat.push({ x, y, vx: dir * (1.4 + Math.random() * 1.6), vy: -1.6 - Math.random() * 1.2, life: 80, s: 3.5 + Math.random() * 2.5 });
+        }
       }
       sweat = sweat.filter(d => (d.life -= 1) > 0 && d.y < H);
-      if (sweat.length) {
-        ctx.globalCompositeOperation = "source-over";
-        for (const d of sweat) {
-          d.vy += .12; d.x += d.vx; d.y += d.vy;
-          ctx.globalAlpha = Math.min(1, d.life / 20) * .9; ctx.fillStyle = "#cfefff";
-          ctx.beginPath(); ctx.moveTo(d.x, d.y - 7); ctx.quadraticCurveTo(d.x + 4.5, d.y, d.x, d.y + 3.5); ctx.quadraticCurveTo(d.x - 4.5, d.y, d.x, d.y - 7); ctx.fill();
+      tc.setTransform(1, 0, 0, 1, 0, 0); tc.clearRect(0, 0, W, H);
+      const fd = Math.min(devicePixelRatio || 1, 2); tc.setTransform(fd, 0, 0, fd, 0, 0);
+      tc.globalCompositeOperation = "source-over";
+      if (!strong && eyes) {
+        tc.globalAlpha = .55 + .15 * Math.sin(t * 9); tc.strokeStyle = "#8fdcff"; tc.lineWidth = Math.max(2.5, r.w * .008); tc.lineCap = "round";
+        for (const [ex0, ey0, dir] of [[eyes[0], eyes[1], -1], [eyes[2], eyes[3], 1]]) {
+          const x = r.x + ex0 * r.w, y = r.y + ey0 * r.h, len = r.h * .045;
+          tc.beginPath(); tc.moveTo(x, y + 2); tc.quadraticCurveTo(x + dir * 3, y + len * .5, x + dir * 1, y + len); tc.stroke();
         }
-        ctx.globalCompositeOperation = "lighter";
       }
+      for (const d of sweat) {
+        d.vy += .22; d.x += d.vx; d.y += d.vy; d.vx *= .99;
+        const a = Math.min(1, d.life / 25), ang = Math.atan2(d.vy, d.vx) - Math.PI / 2, sz = d.s;
+        tc.save(); tc.translate(d.x, d.y); tc.rotate(ang); tc.globalAlpha = a;
+        tc.fillStyle = "#5cc8ff"; tc.strokeStyle = "#0b3b5c"; tc.lineWidth = 1.2;
+        tc.beginPath(); tc.moveTo(0, -sz * 2); tc.quadraticCurveTo(sz * 1.2, 0, 0, sz); tc.quadraticCurveTo(-sz * 1.2, 0, 0, -sz * 2); tc.fill(); tc.stroke();
+        tc.fillStyle = "rgba(255,255,255,.85)"; tc.beginPath(); tc.arc(-sz * .3, -sz * .2, sz * .32, 0, 7); tc.fill();
+        tc.restore();
+      }
+      tc.globalAlpha = 1;
       parts = parts.filter(q => (q.life -= 1) > 0);
       for (const q of parts) {
         q.x += q.vx; q.y += q.vy; q.vy *= .985; q.vx *= .97;
