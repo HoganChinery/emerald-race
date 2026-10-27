@@ -28,6 +28,7 @@
 html, body { margin: 0; }
 body {
   background: radial-gradient(ellipse 120% 60% at 50% -10%, #12263b 0%, var(--void) 60%) fixed, var(--void);
+  isolation: isolate;
   color: var(--text);
   font: 500 16px/1.45 var(--body);
   padding: 28px 16px 48px;
@@ -132,6 +133,10 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .vote-btn.mine { opacity: 1; border-color: var(--side); box-shadow: 0 0 0 1px var(--side) inset; }
 .vote-btn .cta { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--side); }
 
+/* Summoner's Rift backdrop, traced from Riot's minimap: blue base bottom-left, red base top-right */
+.rift { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: url("img/rift.png") center / 100% 100% no-repeat; opacity: .45; }
+.rift::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(5,11,20,.55) 25%, transparent 75%); }
+.frame { background: linear-gradient(180deg, rgba(16,30,46,.94), rgba(12,23,36,.94)); }
 /* Champion renders: fixed at the sides on wide screens, flanking the title otherwise */
 .side-art { position: fixed; bottom: 4vh; height: min(68vh, 760px, calc(((100vw - 880px) / 2 - 90px) * 1.25)); aspect-ratio: 4 / 5; pointer-events: none; z-index: 0; animation: breathe 5s ease-in-out infinite; }
 .side-art.left { right: calc(50% + 500px); }
@@ -171,6 +176,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
+<div class="rift" aria-hidden="true"></div>
 <div class="side-art left" data-aura="#3fa7e0" data-hot="#bfeaff"><canvas aria-hidden="true"></canvas><img src="img/syrio-fiora.png" alt="Syrio Forel as Fiora"></div>
 <div class="side-art right" data-aura="#e84057" data-hot="#ffd0d6"><canvas aria-hidden="true"></canvas><img src="img/curry-lissandra.png" alt="AD Curry as Lissandra"></div>
 <div class="wrap">
