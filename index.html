@@ -133,9 +133,9 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .vote-btn .cta { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--side); }
 
 /* Champion renders: fixed at the sides on wide screens, flanking the title otherwise */
-.side-art { position: fixed; bottom: 0; height: min(92vh, 1100px); width: calc((100vw - 912px) / 2); object-fit: contain; object-position: bottom; pointer-events: none; z-index: 0; filter: drop-shadow(0 10px 24px rgba(0,0,0,.6)); animation: breathe 5s ease-in-out infinite; }
-.side-art.left { left: 8px; object-position: bottom right; }
-.side-art.right { right: 8px; object-position: bottom left; animation-delay: -2.5s; }
+.side-art { position: fixed; bottom: 2vh; height: min(80vh, 940px); width: calc((100vw - 880px) / 2 - 80px); object-fit: contain; object-position: bottom; pointer-events: none; z-index: 0; filter: drop-shadow(0 10px 24px rgba(0,0,0,.6)); animation: breathe 5s ease-in-out infinite; }
+.side-art.left { left: 16px; object-position: bottom right; }
+.side-art.right { right: 16px; object-position: bottom left; animation-delay: -2.5s; }
 .wrap { position: relative; z-index: 1; }
 .hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2.6fr) minmax(0,1fr); grid-template-areas: "l h r"; align-items: end; gap: 8px; }
 .hero > header { grid-area: h; min-width: 0; }
