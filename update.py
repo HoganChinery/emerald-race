@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Scrape both players' Solo/Duo rank from op.gg and rewrite the data block in index.html."""
-import datetime, html, json, os, pathlib, re, urllib.request
+import datetime, html, json, os, pathlib, re, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(__file__).parent
 PAGE = ROOT / "index.html"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36"
 TIERS = ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Emerald", "Diamond", "Master", "Grandmaster", "Challenger"]
 DIVS = {"4": 0, "3": 1, "2": 2, "1": 3}
+ROMAN = {"IV": "4", "III": "3", "II": "2", "I": "1"}
 DATA_RE = re.compile(r'(<script id="race-data" type="application/json">)(.*?)(</script>)', re.S)
 
 
@@ -47,6 +48,25 @@ def scrape(slug):
             "main": champs[0]["name"] if champs else None, "champs": champs}, hist
 
 
+def riot(url, key):
+    req = urllib.request.Request(url, headers={"X-Riot-Token": key, "User-Agent": "emerald-race"})
+    return json.loads(urllib.request.urlopen(req, timeout=20).read())
+
+
+def riot_rank(p, key):
+    """Live Solo/Duo rank straight from Riot. Returns None if the player is unranked in solo queue."""
+    if not p.get("puuid"):
+        name, tag = urllib.parse.quote(p["name"]), urllib.parse.quote(p["tag"])
+        p["puuid"] = riot(f"https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{name}/{tag}", key)["puuid"]
+    for e in riot(f"https://oc1.api.riotgames.com/lol/league/v4/entries/by-puuid/{p['puuid']}", key):
+        if e["queueType"] == "RANKED_SOLO_5x5":
+            tier, div = e["tier"].capitalize(), ROMAN.get(e["rank"])
+            div = div if TIERS.index(tier) < 7 else None
+            return {"tier": tier, "div": div, "lp": e["leaguePoints"], "wins": e["wins"], "losses": e["losses"],
+                    "score": score_of(tier, div, e["leaguePoints"])}
+    return None
+
+
 def champ_icon(name):
     key = re.sub(r"[^A-Za-z]", "", name or "")
     if not key:
@@ -73,6 +93,14 @@ def main():
     changed = False
     for p in data["players"]:
         r, ophist = scrape(p["slug"])
+        r["source"] = "op.gg"
+        if os.environ.get("RIOT_API_KEY"):
+            try:
+                live = riot_rank(p, os.environ["RIOT_API_KEY"])
+                if live:
+                    r.update(live, source="riot")
+            except Exception as e:
+                print(f"Riot API failed for {p['name']} ({e}); using op.gg")
         r["icon"] = champ_icon(r["main"]) or p.get("icon")
         moved = (r["score"], r["wins"], r["losses"]) != (p.get("score"), p.get("wins"), p.get("losses"))
         p.update(r)
@@ -88,7 +116,7 @@ def main():
     blob = json.dumps(data, separators=(",", ":"))
     PAGE.write_text(text[:m.start(2)] + blob + text[m.end(2):])
     for p in data["players"]:
-        print(f'{p["name"]}: {p["tier"]} {p["div"] or ""} {p["lp"]} LP ({p["wins"]}W {p["losses"]}L) score={p["score"]} points={len(p["hist"])}')
+        print(f'{p["name"]}: {p["tier"]} {p["div"] or ""} {p["lp"]} LP ({p["wins"]}W {p["losses"]}L) score={p["score"]} points={len(p["hist"])} via {p["source"]}')
     print("changed" if changed else "no change")
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:

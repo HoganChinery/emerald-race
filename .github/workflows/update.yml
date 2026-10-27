@@ -34,6 +34,8 @@ jobs:
           python-version: "3.12"
       - name: Scrape op.gg
         id: scrape
+        env:
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
         run: python3 update.py
       - name: AI prediction
         id: predict
