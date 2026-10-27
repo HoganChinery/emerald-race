@@ -30,8 +30,16 @@ jobs:
       - name: Scrape op.gg
         id: scrape
         run: python3 update.py
-      - name: Commit when LP changed
-        if: steps.scrape.outputs.changed == 'true'
+      - name: AI prediction
+        id: predict
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LP_CHANGED: ${{ steps.scrape.outputs.changed }}
+        run: |
+          pip install -q anthropic
+          python3 predict.py || echo "::warning::prediction failed; keeping the previous one"
+      - name: Commit when LP or prediction changed
+        if: steps.scrape.outputs.changed == 'true' || steps.predict.outputs.predicted == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

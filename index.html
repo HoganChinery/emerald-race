@@ -105,6 +105,27 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; }
 .empty-note { color: var(--muted); margin: 0; }
 
+/* Oracle + vote */
+.duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.oracle .pick { display: flex; gap: 14px; align-items: center; }
+.oracle .pick img { width: 72px; height: 72px; flex: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+.oracle .pick-label { font: 600 12px var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.oracle .pick-name { font: 700 24px/1.1 var(--display); }
+.oracle .headline { font: 600 20px/1.3 var(--body); margin: 16px 0 8px; text-wrap: balance; }
+.oracle p { margin: 0 0 12px; color: #c9c3b4; max-width: 62ch; }
+.meter { height: 10px; background: #08121d; border: 1px solid var(--line); display: flex; }
+.meter > span { display: block; height: 100%; transition: width .8s ease; }
+.meter-legend { display: flex; justify-content: space-between; gap: 8px; font: 600 14px var(--body); font-variant-numeric: tabular-nums; margin-top: 6px; }
+.eta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.small { font-size: 13px; color: var(--muted); }
+.vote-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.vote-btn { display: grid; justify-items: center; gap: 6px; padding: 12px 8px; background: #08121d; border: 1px solid var(--line); color: var(--text); font: 700 16px var(--body); cursor: pointer; transition: border-color .2s, transform .15s; }
+.vote-btn img { width: 64px; height: 64px; }
+.vote-btn:hover:not(:disabled) { border-color: var(--side); transform: translateY(-2px); }
+.vote-btn:disabled { cursor: default; opacity: .55; }
+.vote-btn.mine { opacity: 1; border-color: var(--side); box-shadow: 0 0 0 1px var(--side) inset; }
+.vote-btn .cta { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--side); }
+
 footer { text-align: center; color: var(--muted); font-size: 14px; }
 
 .winner { text-align: center; font: 800 clamp(22px, 5vw, 34px) var(--display); color: var(--emerald); text-shadow: 0 0 18px rgba(43,209,139,.5); }
@@ -131,6 +152,17 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
   <section class="cards" id="cards"></section>
 
+  <div class="duo">
+    <section class="frame oracle" aria-labelledby="oracle-h">
+      <h2 id="oracle-h">The Oracle predicts</h2>
+      <div id="oracle"><p class="empty-note">The Oracle hasn't read the stats yet. Its first prediction shows up after the next update.</p></div>
+    </section>
+    <section class="frame" aria-labelledby="vote-h">
+      <h2 id="vote-h">Who gets there first?</h2>
+      <div id="vote"><p class="empty-note">Loading votes…</p></div>
+    </section>
+  </div>
+
   <section class="frame" aria-labelledby="hist-h">
     <h2 id="hist-h">LP over time</h2>
     <div class="chart-wrap" id="chart"></div>
@@ -139,7 +171,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   <footer id="footer"></footer>
 </div>
 
-<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"2","lp":21,"wins":143,"losses":140,"score":1821,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png"},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":28,"wins":280,"losses":269,"score":1828,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png"}],"history":[{"t":"2026-10-27T05:23:19+00:00","s":[1821,1828]}],"updated":"2026-10-27T05:30:10+00:00","goal":2000}</script>
+<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"2","lp":21,"wins":143,"losses":140,"score":1821,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png","hist":[{"t":"2026-10-19T07:37:03+00:00","s":1635},{"t":"2026-10-20T13:04:01+00:00","s":1613},{"t":"2026-10-22T15:12:49+00:00","s":1649},{"t":"2026-10-23T15:03:55+00:00","s":1713},{"t":"2026-10-25T12:37:04+00:00","s":1777},{"t":"2026-10-25T16:53:21+00:00","s":1795},{"t":"2026-10-26T15:32:47+00:00","s":1802},{"t":"2026-10-27T05:23:19+00:00","s":1821}],"champs":[{"name":"Fiora","wins":172,"losses":149},{"name":"Ezreal","wins":4,"losses":9},{"name":"Master Yi","wins":2,"losses":0},{"name":"Garen","wins":2,"losses":0},{"name":"Shyvana","wins":1,"losses":1}],"vote":"syrio"},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":28,"wins":280,"losses":269,"score":1828,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png","hist":[{"t":"2026-10-15T16:18:49+00:00","s":1701},{"t":"2026-10-16T22:54:38+00:00","s":1710},{"t":"2026-10-18T11:33:04+00:00","s":1701},{"t":"2026-10-19T12:12:57+00:00","s":1712},{"t":"2026-10-21T20:49:01+00:00","s":1707},{"t":"2026-10-22T16:58:17+00:00","s":1767},{"t":"2026-10-23T18:06:23+00:00","s":1706},{"t":"2026-10-25T12:30:18+00:00","s":1775},{"t":"2026-10-26T13:28:38+00:00","s":1795},{"t":"2026-10-26T15:33:52+00:00","s":1775},{"t":"2026-10-27T05:23:19+00:00","s":1828}],"champs":[{"name":"Lissandra","wins":184,"losses":137},{"name":"Aurora","wins":58,"losses":67},{"name":"Mel","wins":30,"losses":21},{"name":"Locke","wins":7,"losses":13},{"name":"Akshan","wins":5,"losses":12}],"vote":"curry"}],"updated":"2026-10-27T06:13:36+00:00","goal":2000}</script>
 
 <script>
 (function () {
@@ -162,7 +194,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   function rankText(p) { return p.tier === "Unranked" ? "Unranked" : p.tier + (p.div ? " " + ROMAN[p.div] : ""); }
 
   // Track runs from the lowest division anyone has touched (at least Plat IV) to Emerald IV.
-  const scores = P.map(p => p.score).concat(data.history.flatMap(h => h.s));
+  const scores = P.map(p => p.score).concat(P.flatMap(p => (p.hist || []).map(h => h.s)));
   const start = Math.min(1600, Math.floor(Math.min(...scores) / 100) * 100);
   const pct = s => Math.max(0, Math.min(100, (s - start) / (GOAL - start) * 100));
 
@@ -217,15 +249,16 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     </article>`;
   }).join("");
 
-  // History chart
-  const H = data.history;
-  if (H.length < 2) {
-    $("chart").innerHTML = `<p class="empty-note">The graph fills in as games get played. Each time either LP changes, a point is added here.</p>`;
+  // History chart: one line per player, each on its own timestamps
+  const colors = { blue: "#3fa7e0", red: "#e84057" };
+  const series = P.map(p => (p.hist || []).map(h => ({ t: +new Date(h.t), s: h.s })));
+  const allPts = series.flat();
+  if (series.every(sr => sr.length < 2)) {
+    $("chart").innerHTML = `<p class="empty-note">The graph fills in as games get played.</p>`;
   } else {
-    const W = 820, Ht = 240, L = 40, R = 12, T = 12, B = 26;
-    const t0 = +new Date(H[0].t), t1 = +new Date(H[H.length - 1].t) || t0 + 1;
-    const all = H.flatMap(h => h.s);
-    const lo = Math.min(start, Math.floor(Math.min(...all) / 100) * 100), hi = GOAL;
+    const W = 820, Ht = 260, L = 40, R = 14, T = 12, B = 28;
+    const t0 = Math.min(...allPts.map(q => q.t)), t1 = Math.max(...allPts.map(q => q.t));
+    const lo = Math.min(start, Math.floor(Math.min(...allPts.map(q => q.s)) / 100) * 100), hi = GOAL;
     const x = t => L + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * (W - L - R);
     const y = s => T + (1 - (Math.min(s, hi) - lo) / (hi - lo)) * (Ht - T - B);
     let g = "";
@@ -234,17 +267,80 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
       g += `<text x="${L - 6}" y="${y(s) + 4}" text-anchor="end" ${s === GOAL ? 'style="fill:#2bd18b"' : ""}>${divLabel(s)}</text>`;
     }
     const fmt = d => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short" });
-    g += `<text x="${L}" y="${Ht - 6}">${fmt(t0)}</text><text x="${W - R}" y="${Ht - 6}" text-anchor="end">${fmt(t1)}</text>`;
-    const colors = { blue: "#3fa7e0", red: "#e84057" };
+    const DAY = 864e5, step = Math.max(1, Math.ceil((t1 - t0) / DAY / 7)) * DAY;
+    for (let d = new Date(t0).setHours(0, 0, 0, 0) + DAY; d < t1; d += step) {
+      g += `<line x1="${x(d)}" x2="${x(d)}" y1="${T}" y2="${Ht - B}" stroke="#16263a" stroke-width="1"/>`;
+      g += `<text x="${x(d)}" y="${Ht - 8}" text-anchor="middle">${fmt(d)}</text>`;
+    }
     P.forEach((p, i) => {
-      const pts = H.map(h => `${x(+new Date(h.t)).toFixed(1)},${y(h.s[i]).toFixed(1)}`);
-      g += `<polyline points="${pts.join(" ")}" fill="none" stroke="${colors[p.side]}" stroke-width="2.5" stroke-linejoin="round"/>`;
-      const last = pts[pts.length - 1].split(",");
-      g += `<circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="${colors[p.side]}" stroke="#050b14" stroke-width="2"/>`;
+      const sr = series[i]; if (!sr.length) return;
+      const pts = sr.map(q => [x(q.t).toFixed(1), y(q.s).toFixed(1)]);
+      g += `<polyline points="${pts.map(q => q.join(",")).join(" ")}" fill="none" stroke="${colors[p.side]}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      pts.forEach(([cx, cy], j) => {
+        const last = j === pts.length - 1;
+        g += `<circle cx="${cx}" cy="${cy}" r="${last ? 5 : 3}" fill="${colors[p.side]}" stroke="#050b14" stroke-width="${last ? 2 : 1}"><title>${esc(p.name)}: ${divLabel(sr[j].s)} ${sr[j].s % 100} LP, ${fmt(sr[j].t)}</title></circle>`;
+      });
     });
     $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${Ht}" width="100%" style="min-width:520px" role="img" aria-label="LP history for both players">${g}</svg>
-      <div class="legend">${P.map(p => `<span><i style="background:${colors[p.side]}"></i>${esc(p.name)}</span>`).join("")}</div>`;
+      <div class="legend">${P.map(p => `<span><i style="background:${colors[p.side]}"></i>${esc(p.name)}</span>`).join("")}<span class="small">Daily points from op.gg, plus every change this site sees</span></div>`;
   }
+
+  // Oracle (AI prediction written by predict.py)
+  const pr = data.prediction;
+  if (pr) {
+    const w = P.find(p => p.name === pr.winner) || P[0], other = P.find(p => p !== w);
+    const when = new Date(pr.t).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+    $("oracle").innerHTML = `
+      <div class="pick"><img src="${esc(w.photo || w.icon)}" alt="">
+        <div><div class="pick-label">Predicted winner</div><div class="pick-name" style="color:${SIDE[w.side]}">${esc(w.name)}</div></div></div>
+      <div class="headline">“${esc(pr.headline)}”</div>
+      <p>${esc(pr.reasoning)}</p>
+      <div class="meter" role="img" aria-label="${pr.confidence}% ${esc(w.name)}"><span style="width:${pr.confidence}%;background:${SIDE[w.side]}"></span><span style="width:${100 - pr.confidence}%;background:${SIDE[other.side]}"></span></div>
+      <div class="meter-legend"><span style="color:${SIDE[w.side]}">${pr.confidence}%</span><span style="color:${SIDE[other.side]}">${100 - pr.confidence}%</span></div>
+      <dl class="eta">${P.map(p => `<div class="stat"><dt>${esc(p.name)} ETA</dt><dd style="font-size:17px">${esc((pr.eta || {})[p.name] || "?")}</dd></div>`).join("")}</dl>
+      <p class="small" style="margin:12px 0 0">Claude's read of the op.gg stats · ${when}</p>`;
+  }
+
+  // Votes: one per browser, tallied on a public counter
+  const VOTE_API = "https://abacus.jasoncameron.dev", VOTE_NS = "hoganchinery-emerald-race", VOTE_STORE = "emerald-vote";
+  const store = {
+    get() { try { return JSON.parse(localStorage.getItem(VOTE_STORE)); } catch (e) { return null; } },
+    set(v) { try { localStorage.setItem(VOTE_STORE, JSON.stringify(v)); } catch (e) {} }
+  };
+  let myVote = store.get(), counts = null, busy = false;
+  function renderVotes(msg) {
+    const total = counts ? P.reduce((n, p) => n + (counts[p.vote] || 0), 0) : 0;
+    $("vote").innerHTML = `
+      <div class="vote-btns">${P.map(p => `
+        <button type="button" class="vote-btn${myVote && myVote.who === p.vote ? " mine" : ""}" data-key="${esc(p.vote)}" style="--side:${SIDE[p.side]}" ${myVote || !counts || busy ? "disabled" : ""}>
+          <img src="${esc(p.photo || p.icon)}" alt="">${esc(p.name)}
+          <span class="cta">${myVote && myVote.who === p.vote ? "Your pick" : myVote ? "" : "Vote"}</span>
+        </button>`).join("")}</div>
+      ${counts ? `<div class="meter" role="img" aria-label="Vote split">${P.map(p => `<span style="width:${total ? (counts[p.vote] || 0) / total * 100 : 50}%;background:${SIDE[p.side]}"></span>`).join("")}</div>
+      <div class="meter-legend">${P.map(p => `<span style="color:${SIDE[p.side]}">${counts[p.vote] || 0} vote${counts[p.vote] === 1 ? "" : "s"}${total ? ` · ${Math.round((counts[p.vote] || 0) / total * 100)}%` : ""}</span>`).join("")}</div>` : ""}
+      <p class="small" style="margin:12px 0 0">${msg || (myVote ? "Thanks, your vote is in. One vote per browser." : "One vote per browser. Choose wisely.")}</p>`;
+    document.querySelectorAll(".vote-btn").forEach(b => b.addEventListener("click", () => castVote(b.dataset.key)));
+  }
+  async function loadVotes() {
+    try {
+      const vals = await Promise.all(P.map(p => fetch(`${VOTE_API}/get/${VOTE_NS}/${p.vote}`).then(r => r.ok ? r.json() : { value: 0 })));
+      counts = Object.fromEntries(P.map((p, i) => [p.vote, vals[i].value || 0]));
+      renderVotes();
+    } catch (e) { renderVotes("Votes couldn't load. Refresh to try again."); }
+  }
+  async function castVote(key) {
+    if (myVote || busy) return;
+    busy = true; renderVotes("Casting your vote…");
+    try {
+      const r = await fetch(`${VOTE_API}/hit/${VOTE_NS}/${key}`);
+      if (!r.ok) throw new Error(r.status);
+      counts[key] = (await r.json()).value;
+      myVote = { who: key, token: (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)), t: Date.now() };
+      store.set(myVote);
+      busy = false; renderVotes();
+    } catch (e) { busy = false; renderVotes("That vote didn't go through. Try again in a moment."); }
+  }
+  loadVotes();
 
   // Footer
   const upd = data.updated ? new Date(data.updated) : null;
