@@ -67,6 +67,25 @@ def riot_rank(p, key):
     return None
 
 
+def riot_recent(p, key, n=5):
+    """Last n ranked Solo/Duo games, newest first. Match details are cached so only new games cost a request."""
+    ids = riot(f"https://sea.api.riotgames.com/lol/match/v5/matches/by-puuid/{p['puuid']}/ids?queue=420&count={n}", key)
+    known = {g["id"]: g for g in p.get("recent", [])}
+    games = []
+    for mid in ids:
+        if mid not in known:
+            info = riot(f"https://sea.api.riotgames.com/lol/match/v5/matches/{mid}", key)["info"]
+            me = next(x for x in info["participants"] if x["puuid"] == p["puuid"])
+            known[mid] = {"id": mid, "win": me["win"], "champ": me["championName"],
+                          "k": me["kills"], "d": me["deaths"], "a": me["assists"],
+                          "end": info.get("gameEndTimestamp"), "dur": info["gameDuration"],
+                          "remake": bool(me.get("gameEndedInEarlySurrender")) and info["gameDuration"] < 300}
+        g = known[mid]
+        g["icon"] = champ_icon(g["champ"])
+        games.append(g)
+    return games
+
+
 def champ_icon(name):
     key = re.sub(r"[^A-Za-z]", "", name or "")
     if not key:
@@ -95,6 +114,7 @@ def main():
         r, ophist = scrape(p["slug"])
         r["source"] = "op.gg"
         riot_key = os.environ.get("RIOT_API_KEY", "").strip()   # pasted secrets often carry a newline
+        new_games = False
         if riot_key:
             try:
                 live = riot_rank(p, riot_key)
@@ -102,6 +122,11 @@ def main():
                     r.update(live, source="riot")
             except Exception as e:
                 print(f"Riot API failed for {p['name']} ({e}); using op.gg")
+            try:
+                r["recent"] = riot_recent(p, riot_key)
+                new_games = [g["id"] for g in r["recent"]] != [g["id"] for g in p.get("recent", [])]
+            except Exception as e:
+                print(f"Riot match history failed for {p['name']} ({e}); keeping the last known games")
         r["icon"] = champ_icon(r["main"]) or p.get("icon")
         moved = (r["score"], r["wins"], r["losses"]) != (p.get("score"), p.get("wins"), p.get("losses"))
         p.update(r)
@@ -111,7 +136,7 @@ def main():
             hist.setdefault(h["t"], h["s"])
         if moved or not p["hist"] or p["hist"][-1]["s"] != p["score"]:
             hist[now] = p["score"]
-        changed = changed or moved or len(hist) != before
+        changed = changed or moved or new_games or len(hist) != before
         p["hist"] = [{"t": t, "s": s} for t, s in sorted(hist.items())][-300:]
     data["updated"] = now
     blob = json.dumps(data, separators=(",", ":"))
