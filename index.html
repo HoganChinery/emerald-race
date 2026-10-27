@@ -582,10 +582,10 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     const talker = gap === 0 ? P[(Math.random() * 2) | 0] : lead, other = P.find(p => p !== talker);
     hush();
     setTimeout(() => say(talker, fill(pick(TALK, talker.main), talker, other), false), 300);
-    setTimeout(() => say(other, fill(gap === 0 ? pick(TALK, other.main) : pick(BEG, other.main), other, talker), gap !== 0), 2600);
-    setTimeout(hush, 7200);
+    setTimeout(() => say(other, fill(gap === 0 ? pick(TALK, other.main) : pick(BEG, other.main), other, talker), gap !== 0), 4500);
+    setTimeout(hush, 12500);
   }
-  exchange(); setInterval(exchange, 8500);
+  exchange(); setInterval(exchange, 14000);
 
   $("footer").insertAdjacentHTML("beforeend", `<p class="legal">First to Emerald isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>`);
 })();
