@@ -435,9 +435,17 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
           <span class="cta">${myVote && myVote.who === p.vote ? "Your pick" : myVote ? "" : "Vote"}</span>
         </button>`).join("")}</div>
       ${counts ? `<div class="meter" role="img" aria-label="Vote split">${P.map(p => `<span style="width:${total ? (counts[p.vote] || 0) / total * 100 : 50}%;background:${SIDE[p.side]}"></span>`).join("")}</div>
-      <div class="meter-legend">${P.map(p => `<span style="color:${SIDE[p.side]}">${counts[p.vote] || 0} vote${counts[p.vote] === 1 ? "" : "s"}${total ? ` · ${Math.round((counts[p.vote] || 0) / total * 100)}%` : ""}</span>`).join("")}</div>` : ""}
+      <div class="meter-legend">${P.map(p => `<span style="color:${SIDE[p.side]}">${(counts[p.vote] || 0).toLocaleString()} vote${counts[p.vote] === 1 ? "" : "s"}${total ? ` · ${Math.round((counts[p.vote] || 0) / total * 100)}%` : ""}</span>`).join("")}</div>` : ""}
+      ${sus()}
       <p class="small" style="margin:12px 0 0">${msg || (myVote ? "Thanks, your vote is in. One vote per browser." : "One vote per browser. Choose wisely.")}</p>`;
     document.querySelectorAll(".vote-btn").forEach(b => b.addEventListener("click", () => castVote(b.dataset.key)));
+  }
+  // When one side's count gets absurd, the page notices
+  function sus() {
+    if (!counts) return "";
+    const [a, b] = P.map(p => counts[p.vote] || 0), big = a > b ? P[0] : P[1], hi = Math.max(a, b), lo = Math.min(a, b);
+    if (hi < 1000 || hi < lo * 100) return "";
+    return `<p class="small" style="margin:10px 0 0;color:#e8b54a">⚠ Vanguard flagged ${(hi - lo).toLocaleString()} of ${esc(big.name)}'s votes as coming from one incognito window. Investigation ongoing.</p>`;
   }
   async function loadVotes() {
     try {
