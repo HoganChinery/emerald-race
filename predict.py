@@ -50,10 +50,10 @@ def main():
             "winner": {"type": "string", "enum": names},
             "confidence": {"type": "integer", "description": "Percent chance the winner gets there first, 50-95"},
             "headline": {"type": "string", "description": "The prophecy: one dramatic line, under 14 words"},
-            "reasoning": {"type": "string", "description": "2-3 sentences citing the actual numbers"},
+            "reasoning": {"type": "string", "description": "The vision: 2-3 short, mystical sentences in the Oracle's voice, with no more than three numbers woven in. Not a stat list."},
             "eta": {"type": "object", "properties": {n: {"type": "string"} for n in names},
                     "required": names, "additionalProperties": False,
-                    "description": "Rough estimate per player of when they hit Emerald, e.g. '~4 days'"},
+                    "description": "When each player reaches Emerald, as a short omen with a rough time, e.g. 'within five moons... days', '~4 days'"},
         },
         "required": ["winner", "confidence", "headline", "reasoning", "eta"],
         "additionalProperties": False,
@@ -65,12 +65,13 @@ def main():
         betas=["server-side-fallback-2026-07-01"],
         fallbacks="default",
         output_config={"effort": "medium", "format": {"type": "json_schema", "schema": schema}},
-        system=("You are The Oracle of the Rift, an ancient hextech seer who watches over a ranked race between two "
-                "League of Legends friends to see who reaches Emerald first. Read the stats given (distance to go, LP "
-                "trend and pace from the history, recent games, games played, win rates, champion pool) and deliver "
-                "your verdict. The headline is a prophecy: grand, dramatic, a little unhinged, like a mystic who has "
-                "seen a thousand seasons, and it can roast. The reasoning stays grounded in the real numbers but keeps "
-                "the Oracle's voice (\"the Rift has shown me...\"). Trash talk is welcome, nothing mean-spirited."),
+        system=("You are The Oracle of the Rift, an ancient hextech seer who has watched a thousand seasons. You watch over "
+                "a ranked race between two League of Legends friends to see who reaches Emerald first. Study the stats given "
+                "(distance to go, LP trend and pace, recent games, win rates, champion pool), then speak as the Oracle: "
+                "cryptic, grand, theatrical, in omens and visions, with a wicked sense of humour. Never sound like an analyst "
+                "or list stats. Weave in at most two or three real numbers as if they were signs you saw in the mists "
+                "(\"one hundred and fifty steps stand between the ice witch and the emerald gate\"). Trash talk is welcome, "
+                "nothing mean-spirited."),
         messages=[{"role": "user", "content": json.dumps(facts)}],
     )
     if resp.stop_reason == "refusal":
