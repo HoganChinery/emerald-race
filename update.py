@@ -100,6 +100,27 @@ def champ_icon(name):
     return f"img/{key}.png"
 
 
+def fetch(p):
+    """Rank (Riot first, op.gg fallback), op.gg LP history, and recent games for one player."""
+    r, ophist = scrape(p["slug"])
+    r["source"] = "op.gg"
+    new_games = False
+    riot_key = os.environ.get("RIOT_API_KEY", "").strip()   # pasted secrets often carry a newline
+    if riot_key:
+        try:
+            live = riot_rank(p, riot_key)
+            if live:
+                r.update(live, source="riot")
+        except Exception as e:
+            print(f"Riot API failed for {p['name']} ({e}); using op.gg")
+        try:
+            r["recent"] = riot_recent(p, riot_key)
+            new_games = [g["id"] for g in r["recent"]] != [g["id"] for g in p.get("recent", [])]
+        except Exception as e:
+            print(f"Riot match history failed for {p['name']} ({e}); keeping the last known games")
+    return r, ophist, new_games
+
+
 def main():
     text = PAGE.read_text()
     m = DATA_RE.search(text)
@@ -111,22 +132,7 @@ def main():
         p.setdefault("hist", [{"t": h["t"], "s": h["s"][i]} for h in old])
     changed = False
     for p in data["players"]:
-        r, ophist = scrape(p["slug"])
-        r["source"] = "op.gg"
-        riot_key = os.environ.get("RIOT_API_KEY", "").strip()   # pasted secrets often carry a newline
-        new_games = False
-        if riot_key:
-            try:
-                live = riot_rank(p, riot_key)
-                if live:
-                    r.update(live, source="riot")
-            except Exception as e:
-                print(f"Riot API failed for {p['name']} ({e}); using op.gg")
-            try:
-                r["recent"] = riot_recent(p, riot_key)
-                new_games = [g["id"] for g in r["recent"]] != [g["id"] for g in p.get("recent", [])]
-            except Exception as e:
-                print(f"Riot match history failed for {p['name']} ({e}); keeping the last known games")
+        r, ophist, new_games = fetch(p)
         r["icon"] = champ_icon(r["main"]) or p.get("icon")
         moved = (r["score"], r["wins"], r["losses"]) != (p.get("score"), p.get("wins"), p.get("losses"))
         p.update(r)
@@ -138,6 +144,17 @@ def main():
             hist[now] = p["score"]
         changed = changed or moved or new_games or len(hist) != before
         p["hist"] = [{"t": t, "s": s} for t, s in sorted(hist.items())][-300:]
+    # guests: other players shown in the "Tales from across the Rift" box, rank and recent games only
+    for g in data.get("guests", []):
+        try:
+            r, _, new_games = fetch(g)
+            r["icon"] = champ_icon(r["main"]) or g.get("icon")
+            if (r["score"], r["wins"], r["losses"]) != (g.get("score"), g.get("wins"), g.get("losses")) or new_games:
+                changed = True
+            g.update(r)
+            print(f'guest {g["name"]}: {g["tier"]} {g["div"] or ""} {g["lp"]} LP via {g["source"]}')
+        except Exception as e:
+            print(f"guest {g['name']} failed ({e}); keeping last known")
     data["updated"] = now
     blob = json.dumps(data, separators=(",", ":"))
     PAGE.write_text(text[:m.start(2)] + blob + text[m.end(2):])

@@ -97,6 +97,20 @@ h1 {
 .stat dt { font: 600 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .stat dd { margin: 2px 0 0; font: 700 20px var(--body); font-variant-numeric: tabular-nums; }
 .togo { color: var(--emerald); }
+/* Tales from across the Rift: other players worth a look */
+.tales { display: grid; gap: 12px; }
+.tale { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+.tale > img { width: 52px; height: 52px; border: 2px solid var(--gold-dim); }
+.tale .t-name { font: 700 18px var(--display); overflow-wrap: anywhere; }
+.tale .t-name span { color: var(--muted); font-size: .75em; }
+.tale .t-rank { font: 600 15px var(--body); }
+.tale .t-rank b { font-size: 18px; }
+.tale .t-note { font-size: 14px; color: #c9c3b4; font-style: italic; }
+.tale .mini { display: flex; gap: 4px; justify-content: flex-end; }
+.tale .mini img { width: 26px; height: 26px; border-bottom: 3px solid var(--res); }
+.tale .mini .win { --res: var(--emerald); } .tale .mini .loss { --res: var(--red); }
+.tale .t-side { display: grid; gap: 6px; justify-items: end; }
+@media (max-width: 520px) { .tale { grid-template-columns: auto minmax(0, 1fr); } .tale .t-side { grid-column: 1 / -1; justify-items: start; } .tale .mini { justify-content: flex-start; } }
 .recent-head { display: flex; justify-content: space-between; gap: 8px; font: 600 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .recent-head b { color: var(--text); letter-spacing: .06em; }
 .games { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
@@ -248,6 +262,11 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     </section>
   </div>
 
+  <section class="frame" aria-labelledby="tales-h" id="tales-box" hidden>
+    <h2 id="tales-h">Tales from across the Rift</h2>
+    <div class="tales" id="tales"></div>
+  </section>
+
   <section class="frame" aria-labelledby="hist-h">
     <h2 id="hist-h">LP over time</h2>
     <div class="chart-wrap" id="chart"></div>
@@ -256,7 +275,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   <footer id="footer"></footer>
 </div>
 
-<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"3","lp":78,"wins":144,"losses":143,"score":1778,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png","hist":[{"t":"2026-10-19T07:37:03+00:00","s":1635},{"t":"2026-10-20T13:04:01+00:00","s":1613},{"t":"2026-10-22T15:12:49+00:00","s":1649},{"t":"2026-10-23T15:03:55+00:00","s":1713},{"t":"2026-10-25T12:37:04+00:00","s":1777},{"t":"2026-10-25T16:53:21+00:00","s":1795},{"t":"2026-10-26T15:32:47+00:00","s":1802},{"t":"2026-10-27T05:23:19+00:00","s":1821},{"t":"2026-10-27T06:22:08+00:00","s":1778}],"champs":[{"name":"Fiora","wins":173,"losses":152},{"name":"Ezreal","wins":4,"losses":9},{"name":"Master Yi","wins":2,"losses":0},{"name":"Garen","wins":2,"losses":0},{"name":"Shyvana","wins":1,"losses":1}],"vote":"syrio","source":"riot","puuid":"dVt4ywpkT9Jl8vPygXR5GOG5fpButqmFVf0DoMEbqSO9F-pJPrVajjdzsHuORQ_f4aT3jP4yX_2qSA","recent":[{"id":"OC1_713765151","win":false,"champ":"Fiora","k":1,"d":8,"a":2,"end":1793081458573,"dur":1144,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713760749","win":true,"champ":"Fiora","k":13,"d":2,"a":7,"end":1793079882737,"dur":1750,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713761007","win":false,"champ":"Fiora","k":1,"d":9,"a":2,"end":1793077637255,"dur":1629,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713758293","win":false,"champ":"Fiora","k":0,"d":10,"a":3,"end":1793075687079,"dur":1366,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713755015","win":true,"champ":"Fiora","k":10,"d":6,"a":2,"end":1793071959146,"dur":2167,"remake":false,"icon":"img/Fiora.png"}]},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":50,"wins":281,"losses":270,"score":1850,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png","hist":[{"t":"2026-10-15T16:18:49+00:00","s":1701},{"t":"2026-10-16T22:54:38+00:00","s":1710},{"t":"2026-10-18T11:33:04+00:00","s":1701},{"t":"2026-10-19T12:12:57+00:00","s":1712},{"t":"2026-10-21T20:49:01+00:00","s":1707},{"t":"2026-10-22T16:58:17+00:00","s":1767},{"t":"2026-10-23T18:06:23+00:00","s":1706},{"t":"2026-10-25T12:30:18+00:00","s":1775},{"t":"2026-10-26T13:28:38+00:00","s":1795},{"t":"2026-10-26T15:33:52+00:00","s":1775},{"t":"2026-10-27T05:23:19+00:00","s":1828},{"t":"2026-10-27T06:22:08+00:00","s":1870},{"t":"2026-10-27T07:23:26+00:00","s":1850}],"champs":[{"name":"Lissandra","wins":184,"losses":138},{"name":"Aurora","wins":58,"losses":67},{"name":"Mel","wins":30,"losses":21},{"name":"Locke","wins":7,"losses":13},{"name":"Akshan","wins":5,"losses":12}],"vote":"curry","source":"riot","puuid":"Vdm2PttWQeK6g7m-qUUTWYxB0QZR6Hs898El2BROnfFxLedbKRyTvgPx0s5fQbQVIsretSPEFXMjiw","recent":[{"id":"OC1_713770050","win":false,"champ":"Lissandra","k":7,"d":8,"a":11,"end":1793085735725,"dur":1712,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713763263","win":true,"champ":"JarvanIV","k":1,"d":1,"a":15,"end":1793081442596,"dur":1694,"remake":false,"icon":"img/JarvanIV.png"},{"id":"OC1_713755911","win":true,"champ":"Lissandra","k":7,"d":1,"a":12,"end":1793075910162,"dur":1666,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713754407","win":true,"champ":"Mel","k":6,"d":2,"a":1,"end":1793071354008,"dur":1182,"remake":false,"icon":"img/Mel.png"},{"id":"OC1_713754036","win":false,"champ":"Lissandra","k":5,"d":6,"a":4,"end":1793069788894,"dur":1696,"remake":false,"icon":"img/Lissandra.png"}]}],"updated":"2026-10-27T07:25:54+00:00","goal":2000,"prediction":{"winner":"AD Curry","confidence":75,"headline":"Lissandra freezes the lead while Fiora gets parried!","reasoning":"AD Curry sits at 1870 needing just 130 LP, and has climbed about 163 LP since Oct 21 (~30 LP/day), including a spicy +95 in the last 15 hours. Syrio Forel needs 222 after a fresh -43 slide from his 1821 peak, with a steadier ~18 LP/day trend since Oct 19. Curry's also the grinder with 550 games to Syrio's 287 and a slightly better 51.1% win rate, so unless Fiora hard-carries a heater, Syrio's riposte comes too late.","eta":{"Syrio Forel":"~10-12 days","AD Curry":"~4-5 days"},"t":"2026-10-27T06:24:55+00:00","scores":[1778,1870]},"prev_prediction":{"winner":"Syrio Forel","confidence":57,"headline":"Fiora one-trick splitpushes past Lissandra's rollercoaster!","reasoning":"Syrio has climbed steadily from 1635 to 1821 since Oct 19, about +23 LP/day with almost no backsliding, which puts his 179 LP gap at roughly 8 days. AD Curry is 7 LP ahead and has the higher-volume, higher-WR main (Lissandra 184W-137L), but he has netted only +127 since Oct 15 (~11 LP/day), with swings like 1767 to 1706 and 1795 to 1775. Curry's hot recent streak (+122 since Oct 23) makes this close, but Syrio's consistency gives him the slight edge.","eta":{"Syrio Forel":"~8 days","AD Curry":"~9-10 days"},"t":"2026-10-27T06:17:43+00:00"}}</script>
+<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"3","lp":78,"wins":144,"losses":143,"score":1778,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png","hist":[{"t":"2026-10-19T07:37:03+00:00","s":1635},{"t":"2026-10-20T13:04:01+00:00","s":1613},{"t":"2026-10-22T15:12:49+00:00","s":1649},{"t":"2026-10-23T15:03:55+00:00","s":1713},{"t":"2026-10-25T12:37:04+00:00","s":1777},{"t":"2026-10-25T16:53:21+00:00","s":1795},{"t":"2026-10-26T15:32:47+00:00","s":1802},{"t":"2026-10-27T05:23:19+00:00","s":1821},{"t":"2026-10-27T06:22:08+00:00","s":1778}],"champs":[{"name":"Fiora","wins":173,"losses":152},{"name":"Ezreal","wins":4,"losses":9},{"name":"Master Yi","wins":2,"losses":0},{"name":"Garen","wins":2,"losses":0},{"name":"Shyvana","wins":1,"losses":1}],"vote":"syrio","source":"riot","puuid":"dVt4ywpkT9Jl8vPygXR5GOG5fpButqmFVf0DoMEbqSO9F-pJPrVajjdzsHuORQ_f4aT3jP4yX_2qSA","recent":[{"id":"OC1_713765151","win":false,"champ":"Fiora","k":1,"d":8,"a":2,"end":1793081458573,"dur":1144,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713760749","win":true,"champ":"Fiora","k":13,"d":2,"a":7,"end":1793079882737,"dur":1750,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713761007","win":false,"champ":"Fiora","k":1,"d":9,"a":2,"end":1793077637255,"dur":1629,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713758293","win":false,"champ":"Fiora","k":0,"d":10,"a":3,"end":1793075687079,"dur":1366,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_713755015","win":true,"champ":"Fiora","k":10,"d":6,"a":2,"end":1793071959146,"dur":2167,"remake":false,"icon":"img/Fiora.png"}]},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":50,"wins":281,"losses":270,"score":1850,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png","hist":[{"t":"2026-10-15T16:18:49+00:00","s":1701},{"t":"2026-10-16T22:54:38+00:00","s":1710},{"t":"2026-10-18T11:33:04+00:00","s":1701},{"t":"2026-10-19T12:12:57+00:00","s":1712},{"t":"2026-10-21T20:49:01+00:00","s":1707},{"t":"2026-10-22T16:58:17+00:00","s":1767},{"t":"2026-10-23T18:06:23+00:00","s":1706},{"t":"2026-10-25T12:30:18+00:00","s":1775},{"t":"2026-10-26T13:28:38+00:00","s":1795},{"t":"2026-10-26T15:33:52+00:00","s":1775},{"t":"2026-10-27T05:23:19+00:00","s":1828},{"t":"2026-10-27T06:22:08+00:00","s":1870},{"t":"2026-10-27T07:23:26+00:00","s":1850}],"champs":[{"name":"Lissandra","wins":184,"losses":138},{"name":"Aurora","wins":58,"losses":67},{"name":"Mel","wins":30,"losses":21},{"name":"Locke","wins":7,"losses":13},{"name":"Akshan","wins":5,"losses":12}],"vote":"curry","source":"riot","puuid":"Vdm2PttWQeK6g7m-qUUTWYxB0QZR6Hs898El2BROnfFxLedbKRyTvgPx0s5fQbQVIsretSPEFXMjiw","recent":[{"id":"OC1_713770050","win":false,"champ":"Lissandra","k":7,"d":8,"a":11,"end":1793085735725,"dur":1712,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713763263","win":true,"champ":"JarvanIV","k":1,"d":1,"a":15,"end":1793081442596,"dur":1694,"remake":false,"icon":"img/JarvanIV.png"},{"id":"OC1_713755911","win":true,"champ":"Lissandra","k":7,"d":1,"a":12,"end":1793075910162,"dur":1666,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713754407","win":true,"champ":"Mel","k":6,"d":2,"a":1,"end":1793071354008,"dur":1182,"remake":false,"icon":"img/Mel.png"},{"id":"OC1_713754036","win":false,"champ":"Lissandra","k":5,"d":6,"a":4,"end":1793069788894,"dur":1696,"remake":false,"icon":"img/Lissandra.png"}]}],"updated":"2026-10-27T07:35:09+00:00","goal":2000,"prediction":{"winner":"AD Curry","confidence":75,"headline":"Lissandra freezes the lead while Fiora gets parried!","reasoning":"AD Curry sits at 1870 needing just 130 LP, and has climbed about 163 LP since Oct 21 (~30 LP/day), including a spicy +95 in the last 15 hours. Syrio Forel needs 222 after a fresh -43 slide from his 1821 peak, with a steadier ~18 LP/day trend since Oct 19. Curry's also the grinder with 550 games to Syrio's 287 and a slightly better 51.1% win rate, so unless Fiora hard-carries a heater, Syrio's riposte comes too late.","eta":{"Syrio Forel":"~10-12 days","AD Curry":"~4-5 days"},"t":"2026-10-27T06:24:55+00:00","scores":[1778,1870]},"prev_prediction":{"winner":"Syrio Forel","confidence":57,"headline":"Fiora one-trick splitpushes past Lissandra's rollercoaster!","reasoning":"Syrio has climbed steadily from 1635 to 1821 since Oct 19, about +23 LP/day with almost no backsliding, which puts his 179 LP gap at roughly 8 days. AD Curry is 7 LP ahead and has the higher-volume, higher-WR main (Lissandra 184W-137L), but he has netted only +127 since Oct 15 (~11 LP/day), with swings like 1767 to 1706 and 1795 to 1775. Curry's hot recent streak (+122 since Oct 23) makes this close, but Syrio's consistency gives him the slight edge.","eta":{"Syrio Forel":"~8 days","AD Curry":"~9-10 days"},"t":"2026-10-27T06:17:43+00:00"},"guests":[{"name":"thebuntos","tag":"OC","slug":"thebuntos-OC","puuid":"WnupiKs_MQXboJ_UO7iiA7zeni-WdCmPfHJIZMg-1moQD6Qu_kQI8632hHp0VaPaEWGnnOE6K0XJcg","tier":"Silver","div":"3","lp":1,"wins":340,"losses":344,"score":901,"main":"Malzahar","champs":[{"name":"Malzahar","wins":186,"losses":149},{"name":"Seraphine","wins":17,"losses":19},{"name":"Caitlyn","wins":14,"losses":20},{"name":"Shyvana","wins":14,"losses":11},{"name":"Nautilus","wins":11,"losses":11}],"source":"riot","recent":[{"id":"OC1_713769486","win":true,"champ":"Illaoi","k":15,"d":7,"a":6,"end":1793086351521,"dur":1787,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_713767091","win":true,"champ":"Viktor","k":8,"d":2,"a":6,"end":1793084260884,"dur":1920,"remake":false,"icon":"img/Viktor.png"},{"id":"OC1_713762908","win":true,"champ":"Illaoi","k":7,"d":2,"a":5,"end":1793081968176,"dur":1635,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_713742701","win":false,"champ":"Sejuani","k":3,"d":3,"a":1,"end":1793046067999,"dur":1276,"remake":false,"icon":"img/Sejuani.png"},{"id":"OC1_713742595","win":true,"champ":"Chogath","k":5,"d":3,"a":6,"end":1793044030044,"dur":1725,"remake":false,"icon":"img/Chogath.png"}],"icon":"img/Malzahar.png"}]}</script>
 
 <script>
 (function () {
@@ -331,6 +350,39 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
           <span class="kda">${x.k}/${x.d}/${x.a}</span>
           <span class="ago">${x.end ? ago(x.end) : ""}</span></div>`;
       }).join("")}</div></div>`;
+  }
+
+  // Tales from across the Rift: guest players, rank and recent form only
+  const ROM = { "1": "I", "2": "II", "3": "III", "4": "IV" };
+  function taleNote(g) {
+    const r = g.recent || [], w = r.filter(x => x.win && !x.remake).length, l = r.filter(x => !x.win && !x.remake).length;
+    const off = r.filter(x => x.champ !== g.main).length, rank = g.tier + (g.div ? " " + ROM[g.div] : "");
+    if (g.lp <= 5 && g.div) return `Hanging onto ${rank} by ${g.lp} LP. One loss from the abyss.`;
+    if (w >= 4) return `On a ${w}-${l} heater. Somebody check his account.`;
+    if (l >= 4) return `${w}-${l} in his last ${r.length}. Thoughts and prayers.`;
+    if (off >= 4 && g.main) return `Says he's a ${g.main} main. Hasn't played ${g.main} in ${off} games.`;
+    if (g.lp >= 90) return `${g.lp} LP. Promo jitters incoming.`;
+    return `${rank} and minding his own business. For now.`;
+  }
+  const guests = data.guests || [];
+  if (guests.length && guests.some(g => g.tier)) {
+    $("tales-box").hidden = false;
+    $("tales").innerHTML = guests.filter(g => g.tier).map(g => {
+      const games = g.wins + g.losses, wr = games ? Math.round(g.wins / games * 100) : 0;
+      const rank = g.tier === "Unranked" ? "Unranked" : `${g.tier}${g.div ? " " + ROM[g.div] : ""} <b>${g.lp}</b> LP`;
+      return `<article class="tale">
+        ${g.icon ? `<img src="${esc(g.icon)}" alt="${esc(g.main || "")}">` : "<span></span>"}
+        <div style="min-width:0">
+          <div class="t-name">${esc(g.name)} <span>#${esc(g.tag)}</span></div>
+          <div class="t-rank">${rank} · ${g.wins}W ${g.losses}L (${wr}%)</div>
+          <div class="t-note">${esc(taleNote(g))}</div>
+        </div>
+        <div class="t-side">
+          <div class="mini">${(g.recent || []).map(x => `<img class="${x.remake ? "" : x.win ? "win" : "loss"}" src="${esc(x.icon || "")}" alt="${x.win ? "Win" : "Loss"}" title="${x.win ? "Win" : "Loss"} · ${esc(x.champ)} ${x.k}/${x.d}/${x.a}${x.end ? " · " + ago(x.end) : ""}">`).join("")}</div>
+          <a class="small" href="https://op.gg/lol/summoners/oce/${esc(g.slug)}" target="_blank" rel="noopener">op.gg ↗</a>
+        </div>
+      </article>`;
+    }).join("");
   }
 
   // Cards
