@@ -119,6 +119,50 @@ h1 {
 .tale.scoundrel .t-note { color: #d6dde4; }
 .crew { margin: -8px 0 4px; font: 700 13px var(--display); letter-spacing: .14em; text-transform: uppercase; background: linear-gradient(180deg, #f2f5f8, #9aa6b2); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .crew span { font: 500 13px var(--body); letter-spacing: .04em; text-transform: none; -webkit-text-fill-color: var(--muted); }
+
+/* Scoundrel Derby: each Silver Scoundrel gallops toward Gold. Position = progress from Silver IV 0 LP to Gold IV. */
+.derby { --hw: 124px; position: relative; margin: 6px 0 18px; border: 1px solid #5f6b78; overflow: hidden;
+  background: linear-gradient(180deg, #0f2a40 0, #1d4a5c 34px, #0f2a40 35px); }
+.derby .hills { height: 38px; position: relative; }
+.derby .hills svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.derby .marks { position: absolute; inset: 0 0 0 0; pointer-events: none; z-index: 2; }
+.derby .mk { position: absolute; top: 0; bottom: 0; border-left: 1px dashed rgba(255,255,255,.22); }
+.derby .mk span { position: absolute; top: 4px; left: 4px; font: 700 10px var(--body); letter-spacing: .12em; color: #d6dde4; text-shadow: 0 1px 2px #000; white-space: nowrap; }
+.derby .mk.start span { left: auto; right: 4px; } .derby .mk.d span { transform: translateX(-50%); left: 0; }
+.derby .finish { position: absolute; top: 0; bottom: 0; right: 0; width: 12px; z-index: 1;
+  background: repeating-conic-gradient(#f2f5f8 0 25%, #10161d 0 50%) 0 0 / 12px 12px; box-shadow: -4px 0 14px rgba(240,201,107,.5); }
+.derby .finish span { position: absolute; top: 3px; right: 16px; font: 800 12px var(--display); letter-spacing: .1em; color: #f0c96b; text-shadow: 0 0 8px rgba(240,201,107,.8), 0 1px 2px #000; white-space: nowrap; }
+.derby .lane { position: relative; height: 78px; background:
+  radial-gradient(ellipse 3px 1.5px at 30% 60%, rgba(0,0,0,.18) 98%, transparent) 0 0 / 37px 19px,
+  linear-gradient(180deg, #7b5232, #8f6139 55%, #7a5030); border-top: 4px solid #e9edf1; box-shadow: inset 0 3px 0 rgba(0,0,0,.25); }
+.derby .lane:last-child { border-bottom: 4px solid #e9edf1; }
+.derby .lane::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px;
+  background: linear-gradient(90deg, #e9edf1 3px, transparent 3px) 0 0 / 46px 100%; opacity: .9; }
+.derby .runner { position: absolute; bottom: 2px; left: calc((100% - var(--hw)) * var(--x)); width: var(--hw); z-index: 3; transition: left 1.2s cubic-bezier(.2,.8,.2,1); }
+.derby .runner svg { display: block; width: var(--hw); height: calc(var(--hw) * .69); overflow: visible; margin-top: -14px; filter: drop-shadow(0 4px 2px rgba(0,0,0,.45)); }
+.derby .runner .tag { position: absolute; left: 6px; bottom: 2px; transform: translateX(-100%); font: 700 12px var(--body); color: #fff; background: rgba(5,11,20,.78); border-left: 3px solid var(--silk); padding: 1px 6px; white-space: nowrap; line-height: 1.35; }
+.derby .runner .tag small { font-weight: 500; color: #cfd6dd; }
+.derby .runner.flip .tag { left: auto; right: -6px; transform: translateX(100%); }
+.derby .runner.lead svg { filter: drop-shadow(0 4px 2px rgba(0,0,0,.45)) drop-shadow(0 0 8px rgba(240,201,107,.75)); }
+.derby .gallop { animation: bob .44s ease-in-out infinite; }
+.derby .leg { animation: swing .44s ease-in-out infinite alternate; }
+.derby .leg .low { animation: knee .44s ease-in-out infinite alternate; }
+.derby .leg.b { animation-delay: -.22s; } .derby .leg.b .low { animation-delay: -.22s; }
+.derby .tail { animation: tail .44s ease-in-out infinite alternate; }
+.derby .dust { position: absolute; left: 4px; bottom: 6px; width: 10px; height: 10px; border-radius: 50%; background: rgba(214,180,140,.55); animation: dust .9s linear infinite; }
+.derby .dust + .dust { animation-delay: -.45s; left: 14px; }
+.derby .done .gallop, .derby .done .leg, .derby .done .low, .derby .done .tail { animation-duration: 1.6s; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes swing { from { transform: rotate(-38deg); } to { transform: rotate(30deg); } }
+@keyframes knee { from { transform: rotate(10deg); } to { transform: rotate(-55deg); } }
+@keyframes tail { from { transform: rotate(-8deg); } to { transform: rotate(10deg); } }
+@keyframes dust { from { transform: translate(0, 0) scale(.5); opacity: .9; } to { transform: translate(-34px, -10px) scale(2.2); opacity: 0; } }
+.derby .call { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); z-index: 4; font: 800 13px var(--display); letter-spacing: .12em; color: #f0c96b; background: rgba(5,11,20,.85); border: 1px solid #c8aa6e; padding: 3px 10px; white-space: nowrap; }
+.tale .pos { font: 800 22px var(--display); color: var(--silk); min-width: 2.2ch; text-align: center; text-shadow: 0 1px 2px #000; }
+.tale.scoundrel { grid-template-columns: auto auto minmax(0, 1fr) auto; border-left: 4px solid var(--silk); }
+@media (max-width: 520px) { .tale.scoundrel { grid-template-columns: auto auto minmax(0, 1fr); } .derby .runner .tag { font-size: 11px; } }
+@media (max-width: 640px) { .derby { --hw: 88px; } .derby .lane { height: 62px; } .derby .runner .tg { display: none; } .derby .mk.d span { font-size: 9px; } .derby .finish span { top: 18px; font-size: 10px; } }
+@media (prefers-reduced-motion: reduce) { .derby .gallop, .derby .leg, .derby .low, .derby .tail, .derby .dust { animation: none; } }
 .t-note { transition: opacity .35s; }
 .recent-head { display: flex; justify-content: space-between; gap: 8px; font: 600 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .recent-head b { color: var(--text); letter-spacing: .06em; }
@@ -301,7 +345,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
   <section class="frame" aria-labelledby="tales-h" id="tales-box" hidden>
     <h2 id="tales-h">Tales from across the Rift</h2>
-    <div class="crew">⚔ The Silver Scoundrels</div>
+    <div class="crew">⚔ The Silver Scoundrels <span>· the derby to Gold</span></div>
+    <div class="derby" id="derby" role="img"></div>
     <div class="tales" id="tales"></div>
   </section>
 
@@ -428,12 +473,66 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     return tFill(b.pop(), g);
   }; })();
   const guests = (data.guests || []).filter(g => g.tier).sort((a, b) => b.score - a.score);
+  // Scoundrel Derby: Silver IV 0 LP (score 800) is the gate, Gold IV (1200) the finish.
+  const SILKS = ["#e84057", "#3fa7e0", "#f0c96b", "#2bd18b", "#b77bf0", "#ff8a3d"];
+  const COATS = [["#6b3a1f", "#2a160b"], ["#1c1c22", "#0a0a0d"], ["#8a5a2b", "#3a2412"], ["#d9d2c5", "#8d857a"], ["#4a2a18", "#1a0d06"], ["#5a5f66", "#24272b"]];
+  const GATE = 800, GOLD = 1200;
+  (data.guests || []).forEach((g, i) => { g._num = i + 1; g._silk = SILKS[i % SILKS.length]; g._coat = COATS[i % COATS.length]; });
+  const horse = g => {
+    const [coat, dark] = g._coat, id = "hd" + g._num;
+    const leg = (x, y, cls, c) => `<g class="leg ${cls}" style="transform-origin:${x}px ${y}px"><path d="M${x - 3} ${y} L${x + 3} ${y} L${x + 2} ${y + 15} L${x - 2} ${y + 15} Z" fill="${c}"/>
+      <g class="low" style="transform-origin:${x}px ${y + 14}px"><path d="M${x - 2} ${y + 14} L${x + 2} ${y + 14} L${x + 1.5} ${y + 28} L${x - 1.5} ${y + 28} Z" fill="${c}"/><rect x="${x - 3}" y="${y + 27}" width="6" height="3.5" rx="1" fill="#15100c"/></g></g>`;
+    return `<svg viewBox="0 0 130 90" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="78" cy="5" r="11"/></clipPath></defs>
+      <g class="gallop">
+        ${leg(40, 48, "b", dark)}${leg(84, 48, "a", dark)}
+        <path class="tail" style="transform-origin:31px 38px" d="M31 36 C18 33 9 44 5 60 C13 52 20 47 31 43 Z" fill="${dark}"/>
+        <path d="M34 34 C40 26 72 25 84 29 C93 31 95 46 87 52 C74 58 46 58 36 53 C28 48 28 40 34 34 Z" fill="${coat}"/>
+        <path d="M79 34 C83 24 89 16 97 10 L104 7 C109 9 116 17 121 23 C122 27 118 29 115 28 L106 24 C102 30 97 38 91 46 Z" fill="${coat}"/>
+        <path d="M100 8 L102 0 L106 7 Z" fill="${coat}"/>
+        <path d="M79 32 C85 22 91 14 99 8 L98 14 C92 19 88 26 84 34 Z" fill="${dark}"/>
+        <circle cx="108" cy="14" r="1.4" fill="#0b0b0b"/>
+        ${leg(46, 48, "a", coat)}${leg(88, 46, "b", coat)}
+        <rect x="49" y="29" width="20" height="15" rx="2" fill="#f4f1ea" stroke="${g._silk}" stroke-width="1.5"/>
+        <text x="59" y="40.5" text-anchor="middle" font-family="Barlow Semi Condensed, sans-serif" font-weight="700" font-size="11" fill="#14181d">${g._num}</text>
+        <path d="M66 30 L72 36 L68 40" stroke="#2a2a2a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M56 30 L64 28 L80 15 L72 11 Z" fill="${g._silk}"/>
+        <path d="M76 15 L90 22 L99 17" stroke="${g._silk}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M99 17 L108 21" stroke="#3a2a1a" stroke-width="1"/>
+        ${g.icon ? `<image href="${esc(g.icon)}" x="66.5" y="-6.5" width="23" height="23" clip-path="url(#${id})"/>` : ""}
+        <circle cx="78" cy="5" r="11" fill="none" stroke="${g._silk}" stroke-width="2.4"/>
+      </g></svg>`;
+  };
+  const derby = gs => {
+    const ranked = gs.filter(g => g.tier !== "Unranked");
+    const done = ranked.filter(g => g.score >= GOLD).sort((a, b) => (a.gold_at || "9").localeCompare(b.gold_at || "9"));
+    const best = Math.max(...ranked.map(g => g.score));
+    const marks = ["III", "II", "I"].map((d, k) => `<div class="mk d" style="left:calc(var(--hw) * .93 + (100% - var(--hw)) * ${(k + 1) / 4})"><span>S ${d}</span></div>`).join("");
+    const lanes = (data.guests || []).map(g => {
+      const x = Math.max(0, Math.min(1, (g.score - GATE) / (GOLD - GATE)));
+      const toGo = Math.max(0, GOLD - g.score);
+      const short = g.tier === "Unranked" ? "unranked" : `${g.tier[0]}${g.div ? ROM[g.div] : ""} ${g.lp} LP`;
+      const lead = g.score === best && !done.length;
+      return `<div class="lane"><div class="runner${lead ? " lead" : ""}${x < .45 ? " flip" : ""}${x >= 1 ? " done" : ""}" style="--x:${x};--silk:${g._silk}">
+        ${x < 1 ? '<span class="dust"></span><span class="dust"></span>' : ""}${horse(g)}
+        <div class="tag">${esc(g.name)} <small>· ${short}<span class="tg">${x < 1 ? ` · ${toGo} to Gold` : " · GOLD"}</span></small></div></div></div>`;
+    }).join("");
+    const call = done.length ? `<div class="call">🏆 ${esc(done[0].name)} wins the derby!</div>` : "";
+    $("derby").setAttribute("aria-label", "Derby to Gold: " + gs.map(g => `${g.name} ${Math.max(0, GOLD - g.score)} LP from Gold`).join(", "));
+    $("derby").innerHTML = `<div class="hills"><svg viewBox="0 0 400 38" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 38 L0 22 C30 10 60 16 90 20 C130 6 170 8 210 18 C250 4 300 10 340 16 C365 8 385 12 400 14 L400 38 Z" fill="#1d3b2c"/>
+        <path d="M0 38 L0 28 C40 20 80 26 120 28 C170 18 220 22 260 28 C310 20 360 24 400 26 L400 38 Z" fill="#244a33"/>
+        <path d="M0 38 L0 34 L400 34 L400 38 Z" fill="#e9edf1"/></svg></div>
+      ${lanes}<div class="marks"><div class="mk start" style="left:calc(var(--hw) * .93)"><span>SILVER IV</span></div>${marks}</div>
+      <div class="finish"><span>GOLD ⟶</span></div>${call}`;
+  };
   if (guests.length) {
     $("tales-box").hidden = false;
+    derby(guests);
     $("tales").innerHTML = guests.map((g, i) => {
       const games = g.wins + g.losses, wr = games ? Math.round(g.wins / games * 100) : 0;
       const rank = g.tier === "Unranked" ? "Unranked" : `${g.tier}${g.div ? " " + ROM[g.div] : ""} <b>${g.lp}</b> LP`;
-      return `<article class="tale scoundrel">
+      return `<article class="tale scoundrel" style="--silk:${g._silk}">
+        <span class="pos" title="Saddle no. ${g._num}">${i + 1}</span>
         ${g.icon ? `<img src="${esc(g.icon)}" alt="${esc(g.main || "")}">` : "<span></span>"}
         <div style="min-width:0">
           <div class="t-name">${esc(g.name)} <span>#${esc(g.tag)}</span><span class="badge silver">Silver Scoundrel</span></div>
