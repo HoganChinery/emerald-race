@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
+    inputs:
+      force_prediction:
+        description: "Make a new AI prediction even if one ran recently"
+        type: boolean
+        default: false
   push:
     branches: [main]
 
@@ -35,6 +40,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           LP_CHANGED: ${{ steps.scrape.outputs.changed }}
+          FORCE_PREDICTION: ${{ inputs.force_prediction }}
         run: |
           pip install -q anthropic
           python3 predict.py || echo "::warning::prediction failed; keeping the previous one"

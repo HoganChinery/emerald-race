@@ -18,7 +18,8 @@ def main():
     data = json.loads(m.group(2))
     now = datetime.datetime.now(datetime.timezone.utc)
     prev = data.get("prediction")
-    if prev and "--force" not in sys.argv:
+    force = "--force" in sys.argv or os.environ.get("FORCE_PREDICTION") == "true"
+    if prev and not force:
         if os.environ.get("LP_CHANGED") == "false":
             print("no LP change; keeping previous prediction")
             return
@@ -73,6 +74,8 @@ def main():
     pred = json.loads(next(b.text for b in resp.content if b.type == "text"))
     pred["confidence"] = max(50, min(95, int(pred["confidence"])))
     pred["t"] = now.isoformat(timespec="seconds")
+    if prev:
+        data["prev_prediction"] = prev     # keep exactly one earlier call
     data["prediction"] = pred
     blob = json.dumps(data, separators=(",", ":"))
     PAGE.write_text(text[:m.start(2)] + blob + text[m.end(2):])

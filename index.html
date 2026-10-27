@@ -118,6 +118,11 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .meter-legend { display: flex; justify-content: space-between; gap: 8px; font: 600 14px var(--body); font-variant-numeric: tabular-nums; margin-top: 6px; }
 .eta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
 .small { font-size: 13px; color: var(--muted); }
+.prev-call { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+.prev-call summary { cursor: pointer; font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.prev-call summary:hover { color: var(--gold); }
+.prev-call .prev-body { margin-top: 10px; display: grid; gap: 6px; }
+.prev-call .prev-body p { margin: 0; font-size: 15px; }
 .vote-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .vote-btn { display: grid; justify-items: center; gap: 6px; padding: 12px 8px; background: #08121d; border: 1px solid var(--line); color: var(--text); font: 700 16px var(--body); cursor: pointer; transition: border-color .2s, transform .15s; }
 .vote-btn img { width: 64px; height: 64px; }
@@ -299,6 +304,18 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
       <div class="meter-legend"><span style="color:${SIDE[w.side]}">${pr.confidence}%</span><span style="color:${SIDE[other.side]}">${100 - pr.confidence}%</span></div>
       <dl class="eta">${P.map(p => `<div class="stat"><dt>${esc(p.name)} ETA</dt><dd style="font-size:17px">${esc((pr.eta || {})[p.name] || "?")}</dd></div>`).join("")}</dl>
       <p class="small" style="margin:12px 0 0">Claude's read of the op.gg stats · ${when}</p>`;
+    const old = data.prev_prediction;
+    if (old) {
+      const ow = P.find(p => p.name === old.winner) || P[0];
+      const owhen = new Date(old.t).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+      $("oracle").insertAdjacentHTML("beforeend", `
+        <details class="prev-call"><summary>Previous call · ${esc(ow.name)} ${old.confidence}%</summary>
+          <div class="prev-body">
+            <p><b style="color:${SIDE[ow.side]}">${esc(ow.name)}</b> at ${old.confidence}% · “${esc(old.headline)}”</p>
+            <p class="small">${esc(old.reasoning)}</p>
+            <p class="small">ETA then: ${P.map(p => `${esc(p.name)} ${esc((old.eta || {})[p.name] || "?")}`).join(" · ")} · ${owhen}</p>
+          </div></details>`);
+    }
   }
 
   // Votes: one per browser, tallied on a public counter
