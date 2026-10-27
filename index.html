@@ -132,6 +132,7 @@ svg text { font: 600 11px var(--body); fill: var(--muted); }
 .vote-btn .cta { font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--side); }
 
 footer { text-align: center; color: var(--muted); font-size: 14px; }
+.legal { max-width: 70ch; margin: 10px auto 0; font-size: 12px; opacity: .75; text-wrap: balance; }
 
 .winner { text-align: center; font: 800 clamp(22px, 5vw, 34px) var(--display); color: var(--emerald); text-shadow: 0 0 18px rgba(43,209,139,.5); }
 
@@ -362,7 +363,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   // Footer
   const upd = data.updated ? new Date(data.updated) : null;
   $("footer").innerHTML = (upd ? `Last checked ${upd.toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}` : "Not checked yet")
-    + ` · Rank data from op.gg`;
+    + ` · Rank data from ${P.some(p => p.source === "riot") ? "Riot Games" : "op.gg"}`;
+  $("footer").insertAdjacentHTML("beforeend", `<p class="legal">First to Emerald isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>`);
 })();
 </script>
 </body>
