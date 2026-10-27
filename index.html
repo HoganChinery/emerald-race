@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>First to Emerald</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one column. Banner verdict, then a race track (one lane per player, ticks per division, emerald finish), then two side-by-side player cards, then LP history. */
+:root {
+  --void: #050b14;        /* client background */
+  --panel: #0c1724;
+  --panel-2: #101e2e;
+  --gold: #c8aa6e;
+  --gold-dim: #6b5530;
+  --text: #f0e6d2;
+  --muted: #8a9aa8;
+  --blue: #3fa7e0;        /* blue side */
+  --red: #e84057;         /* red side */
+  --emerald: #2bd18b;
+  --line: #1f3043;
+  --display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --body: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: radial-gradient(ellipse 120% 60% at 50% -10%, #12263b 0%, var(--void) 60%) fixed, var(--void);
+  color: var(--text);
+  font: 500 16px/1.45 var(--body);
+  padding: 28px 16px 48px;
+  min-height: 100%;
+}
+.wrap { max-width: 880px; margin: 0 auto; display: grid; gap: 28px; }
+a { color: var(--gold); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* Banner */
+header { text-align: center; display: grid; gap: 6px; justify-items: center; }
+.eyebrow { font: 600 13px var(--body); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+h1 {
+  margin: 0; font: 800 clamp(34px, 7vw, 58px)/1.05 var(--display); letter-spacing: .04em;
+  background: linear-gradient(180deg, #f0e6d2 10%, var(--gold) 60%, #8a6d3b 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-wrap: balance;
+}
+.rule { width: min(420px, 80%); height: 12px; position: relative; }
+.rule::before { content: ""; position: absolute; inset: 5px 0; border-top: 1px solid var(--gold-dim); border-bottom: 1px solid var(--gold-dim); }
+.rule::after { content: ""; position: absolute; left: 50%; top: 0; width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg); background: var(--emerald); box-shadow: 0 0 12px var(--emerald); }
+.verdict { font: 600 clamp(18px, 3.4vw, 24px) var(--body); text-wrap: balance; }
+.verdict b { font-weight: 700; }
+
+/* Hextech frame */
+.frame { background: linear-gradient(180deg, var(--panel-2), var(--panel)); border: 1px solid var(--gold-dim); position: relative; padding: 22px 20px; }
+.frame::before { content: ""; position: absolute; inset: 3px; border: 1px solid rgba(200,170,110,.12); pointer-events: none; }
+.frame h2 { margin: 0 0 16px; font: 600 14px var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
+
+/* Race track */
+.track { display: grid; gap: 18px; }
+.lane { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.lane-label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+.lane-label .lp { font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar { position: relative; height: 34px; background: #08121d; border: 1px solid var(--line); }
+.bar .ticks { position: absolute; inset: 0; }
+.bar .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.bar .fill { position: absolute; left: 0; top: 0; bottom: 0; transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
+.bar .fill::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, transparent 0 10px, rgba(255,255,255,.06) 10px 20px); }
+.bar .tip { position: absolute; top: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%); border: 2px solid var(--gold); background: var(--panel) center/cover; transition: left 1.2s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 0 2px var(--void); }
+.bar .finish { position: absolute; right: -1px; top: -6px; bottom: -6px; width: 4px; background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
+.scale { position: relative; height: 18px; font: 600 12px var(--body); color: var(--muted); letter-spacing: .06em; }
+.scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.scale span.goal { color: var(--emerald); }
+
+/* Player cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card { display: grid; gap: 14px; border-top: 3px solid var(--side); }
+.card .who { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.card .who img { width: 56px; height: 56px; border: 2px solid var(--gold); flex: none; }
+.card .name { font: 700 22px/1.1 var(--display); letter-spacing: .02em; overflow-wrap: anywhere; }
+.card .side { font: 600 12px var(--body); letter-spacing: .18em; text-transform: uppercase; color: var(--side); }
+.card .rank { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.card .rank .tier { font: 600 20px var(--display); }
+.card .rank .lpbig { font: 700 40px/1 var(--body); font-variant-numeric: tabular-nums; }
+.card .rank .lpbig small { font-size: 18px; color: var(--muted); margin-left: 3px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: #08121d; border: 1px solid var(--line); padding: 8px 10px; }
+.stat dt { font: 600 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.stat dd { margin: 2px 0 0; font: 700 20px var(--body); font-variant-numeric: tabular-nums; }
+.togo { color: var(--emerald); }
+.card .opgg { font-size: 14px; justify-self: start; }
+.leader-chip { font: 700 11px var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--void); background: var(--gold); padding: 2px 8px; margin-left: auto; align-self: flex-start; }
+
+/* History */
+.chart-wrap { overflow-x: auto; }
+svg text { font: 600 11px var(--body); fill: var(--muted); }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; }
+.empty-note { color: var(--muted); margin: 0; }
+
+footer { text-align: center; color: var(--muted); font-size: 14px; }
+
+.winner { text-align: center; font: 800 clamp(22px, 5vw, 34px) var(--display); color: var(--emerald); text-shadow: 0 0 18px rgba(43,209,139,.5); }
+
+@media (prefers-reduced-motion: reduce) { .bar .fill, .bar .tip { transition: none; } }
+@media (max-width: 480px) { .frame { padding: 18px 14px; } .stat dd { font-size: 18px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">OCE · Ranked Solo/Duo</div>
+    <h1>First to Emerald</h1>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="verdict" id="verdict">Loading the ladder…</div>
+  </header>
+
+  <div id="winner" class="winner" hidden></div>
+
+  <section class="frame" aria-labelledby="race-h">
+    <h2 id="race-h">The race</h2>
+    <div class="track" id="track"></div>
+  </section>
+
+  <section class="cards" id="cards"></section>
+
+  <section class="frame" aria-labelledby="hist-h">
+    <h2 id="hist-h">LP over time</h2>
+    <div class="chart-wrap" id="chart"></div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"2","lp":21,"wins":143,"losses":140,"score":1821,"main":"Fiora","icon":"img/Fiora.png"},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":28,"wins":280,"losses":269,"score":1828,"main":"Lissandra","icon":"img/Lissandra.png"}],"history":[{"t":"2026-10-27T05:23:19+00:00","s":[1821,1828]}],"updated":"2026-10-27T05:30:10+00:00","goal":2000}</script>
+
+<script>
+(function () {
+  const data = JSON.parse(document.getElementById("race-data").textContent);
+  const GOAL = data.goal;                       // Emerald IV, 0 LP
+  const TIERS = ["Iron","Bronze","Silver","Gold","Platinum","Emerald","Diamond","Master"];
+  const SHORT = { Iron:"I", Bronze:"B", Silver:"S", Gold:"G", Platinum:"P", Emerald:"E", Diamond:"D" };
+  const ROMAN = { "1":"I", "2":"II", "3":"III", "4":"IV" };
+  const SIDE = { blue: "var(--blue)", red: "var(--red)" };
+  const P = data.players;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+  // Score is LP above Iron IV 0 LP: every division is 100 LP, every tier 400.
+  function divLabel(score) {
+    if (score >= GOAL) return "E4";
+    const t = Math.floor(score / 400), d = 4 - Math.floor((score % 400) / 100);
+    return SHORT[TIERS[t]] + d;
+  }
+  function rankText(p) { return p.tier === "Unranked" ? "Unranked" : p.tier + (p.div ? " " + ROMAN[p.div] : ""); }
+
+  // Track runs from the lowest division anyone has touched (at least Plat IV) to Emerald IV.
+  const scores = P.map(p => p.score).concat(data.history.flatMap(h => h.s));
+  const start = Math.min(1600, Math.floor(Math.min(...scores) / 100) * 100);
+  const pct = s => Math.max(0, Math.min(100, (s - start) / (GOAL - start) * 100));
+
+  const sorted = [...P].sort((a, b) => b.score - a.score);
+  const [lead, trail] = sorted;
+  const gap = lead.score - trail.score;
+  const winner = P.find(p => p.score >= GOAL);
+
+  // Verdict
+  $("verdict").innerHTML = winner ? `<b style="color:${SIDE[winner.side]}">${esc(winner.name)}</b> made it to Emerald`
+    : gap === 0 ? "Dead even. Every game counts."
+    : `<b style="color:${SIDE[lead.side]}">${esc(lead.name)}</b> leads by <b>${gap} LP</b>`;
+  if (winner) { $("winner").hidden = false; $("winner").textContent = "Emerald reached. Race over."; }
+
+  // Track
+  const ticks = [];
+  for (let s = start; s <= GOAL; s += 100) ticks.push(s);
+  $("track").innerHTML = P.map(p => `
+    <div class="lane">
+      <div class="lane-label"><span style="color:${SIDE[p.side]}">${esc(p.name)}</span><span class="lp">${Math.max(0, GOAL - p.score)} LP to go</span></div>
+      <div class="bar" role="img" aria-label="${esc(p.name)}: ${rankText(p)} ${p.lp} LP">
+        <div class="ticks">${ticks.slice(1, -1).map(s => `<div class="tick" style="left:${pct(s)}%"></div>`).join("")}</div>
+        <div class="fill" data-w="${pct(p.score)}" style="width:0;background:linear-gradient(90deg, transparent, ${SIDE[p.side]})"></div>
+        <div class="finish"></div>
+        <div class="tip" data-l="${pct(p.score)}" style="left:0;background-image:url('${esc(p.icon || "")}');border-color:${SIDE[p.side]}"></div>
+      </div>
+    </div>`).join("") + `
+    <div class="scale" aria-hidden="true">${ticks.map(s => `<span class="${s === GOAL ? "goal" : ""}" style="left:${pct(s)}%">${s === GOAL ? "EMERALD" : divLabel(s)}</span>`).join("")}</div>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll(".fill").forEach(el => el.style.width = el.dataset.w + "%");
+    document.querySelectorAll(".tip").forEach(el => el.style.left = el.dataset.l + "%");
+  }));
+
+  // Cards
+  $("cards").innerHTML = P.map(p => {
+    const games = p.wins + p.losses, wr = games ? Math.round(p.wins / games * 100) : 0;
+    const isLead = gap > 0 && p === lead;
+    return `<article class="frame card" style="--side:${SIDE[p.side]}">
+      <div class="who">
+        ${p.icon ? `<img src="${esc(p.icon)}" alt="${esc(p.main || "")}">` : ""}
+        <div style="min-width:0"><div class="side">${p.side} side${p.main ? " · " + esc(p.main) + " main" : ""}</div>
+        <div class="name">${esc(p.name)}<span style="color:var(--muted);font-size:.7em"> #${esc(p.tag)}</span></div></div>
+        ${isLead ? `<span class="leader-chip">Leading</span>` : ""}
+      </div>
+      <div class="rank"><span class="tier">${rankText(p)}</span><span class="lpbig">${p.lp}<small>LP</small></span></div>
+      <dl class="stats">
+        <div class="stat"><dt>Record</dt><dd>${p.wins}W ${p.losses}L</dd></div>
+        <div class="stat"><dt>Win rate</dt><dd>${wr}%</dd></div>
+        <div class="stat"><dt>To Emerald</dt><dd class="togo">${Math.max(0, GOAL - p.score)}</dd></div>
+      </dl>
+      <a class="opgg" href="https://op.gg/lol/summoners/oce/${p.slug}" target="_blank" rel="noopener">View on op.gg ↗</a>
+    </article>`;
+  }).join("");
+
+  // History chart
+  const H = data.history;
+  if (H.length < 2) {
+    $("chart").innerHTML = `<p class="empty-note">The graph fills in as games get played. Each time either LP changes, a point is added here.</p>`;
+  } else {
+    const W = 820, Ht = 240, L = 40, R = 12, T = 12, B = 26;
+    const t0 = +new Date(H[0].t), t1 = +new Date(H[H.length - 1].t) || t0 + 1;
+    const all = H.flatMap(h => h.s);
+    const lo = Math.min(start, Math.floor(Math.min(...all) / 100) * 100), hi = GOAL;
+    const x = t => L + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * (W - L - R);
+    const y = s => T + (1 - (Math.min(s, hi) - lo) / (hi - lo)) * (Ht - T - B);
+    let g = "";
+    for (let s = lo; s <= hi; s += 100) {
+      g += `<line x1="${L}" x2="${W - R}" y1="${y(s)}" y2="${y(s)}" stroke="${s === GOAL ? "#2bd18b" : "#1f3043"}" stroke-width="1"/>`;
+      g += `<text x="${L - 6}" y="${y(s) + 4}" text-anchor="end" ${s === GOAL ? 'style="fill:#2bd18b"' : ""}>${divLabel(s)}</text>`;
+    }
+    const fmt = d => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    g += `<text x="${L}" y="${Ht - 6}">${fmt(t0)}</text><text x="${W - R}" y="${Ht - 6}" text-anchor="end">${fmt(t1)}</text>`;
+    const colors = { blue: "#3fa7e0", red: "#e84057" };
+    P.forEach((p, i) => {
+      const pts = H.map(h => `${x(+new Date(h.t)).toFixed(1)},${y(h.s[i]).toFixed(1)}`);
+      g += `<polyline points="${pts.join(" ")}" fill="none" stroke="${colors[p.side]}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      const last = pts[pts.length - 1].split(",");
+      g += `<circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="${colors[p.side]}" stroke="#050b14" stroke-width="2"/>`;
+    });
+    $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${Ht}" width="100%" style="min-width:520px" role="img" aria-label="LP history for both players">${g}</svg>
+      <div class="legend">${P.map(p => `<span><i style="background:${colors[p.side]}"></i>${esc(p.name)}</span>`).join("")}</div>`;
+  }
+
+  // Footer
+  const upd = data.updated ? new Date(data.updated) : null;
+  $("footer").innerHTML = (upd ? `Last checked ${upd.toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}` : "Not checked yet")
+    + ` · Rank data from op.gg`;
+})();
+</script>
+</body>
+</html>
