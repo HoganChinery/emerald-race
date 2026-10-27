@@ -62,22 +62,28 @@ h1 {
 .lane { display: grid; grid-template-columns: 1fr; gap: 6px; }
 .lane-label { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
 .lane-label .lp { font-variant-numeric: tabular-nums; color: var(--muted); }
-.bar { position: relative; height: 34px; background: #08121d; border: 1px solid var(--line); }
+.bar { position: relative; height: 38px; margin-block: 10px; background: #08121d; border: 1px solid var(--line); }
 .bar .ticks { position: absolute; inset: 0; }
 .bar .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
 .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
 .bar .fill::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, transparent 0 10px, rgba(255,255,255,.06) 10px 20px); }
-.bar .tip { position: absolute; top: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%); border: 2px solid var(--gold); background: var(--panel) center/cover; transition: left 1.2s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 0 2px var(--void); }
+.bar .tip { position: absolute; top: 50%; width: 64px; height: 64px; transform: translate(-50%, -50%); transition: left 1.2s cubic-bezier(.2,.8,.2,1); z-index: 2; }
+.bar .tip img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 3px 4px rgba(0,0,0,.6)); transform-origin: 50% 85%; animation: jitter 1.6s ease-in-out infinite; }
+.lane:nth-child(2) .tip img { animation-duration: 1.35s; animation-delay: -.5s; }
+@keyframes jitter { 0%, 100% { transform: rotate(-6deg); } 25% { transform: rotate(5deg) translateY(-1px); } 50% { transform: rotate(-4deg); } 75% { transform: rotate(6deg) translateY(-1px); } }
 .bar .finish { position: absolute; right: -1px; top: -6px; bottom: -6px; width: 4px; background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
 .scale { position: relative; height: 18px; font: 600 12px var(--body); color: var(--muted); letter-spacing: .06em; }
 .scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
-.scale span.goal { color: var(--emerald); }
+.scale span.goal { color: var(--emerald); transform: translateX(-100%); }
+.scale span:first-child { transform: none; }
 
 /* Player cards */
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .card { display: grid; gap: 14px; border-top: 3px solid var(--side); }
 .card .who { display: flex; gap: 12px; align-items: center; min-width: 0; }
-.card .who img { width: 56px; height: 56px; border: 2px solid var(--gold); flex: none; }
+.card .who .face { position: relative; width: 64px; height: 64px; flex: none; }
+.card .who .face > img { width: 100%; height: 100%; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.card .who .face > .champ { position: absolute; right: -4px; bottom: -2px; width: 24px; height: 24px; border: 1px solid var(--gold); }
 .card .name { font: 700 22px/1.1 var(--display); letter-spacing: .02em; overflow-wrap: anywhere; }
 .card .side { font: 600 12px var(--body); letter-spacing: .18em; text-transform: uppercase; color: var(--side); }
 .card .rank { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -103,7 +109,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
 .winner { text-align: center; font: 800 clamp(22px, 5vw, 34px) var(--display); color: var(--emerald); text-shadow: 0 0 18px rgba(43,209,139,.5); }
 
-@media (prefers-reduced-motion: reduce) { .bar .fill, .bar .tip { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .bar .fill, .bar .tip { transition: none; } .bar .tip img { animation: none; } }
 @media (max-width: 480px) { .frame { padding: 18px 14px; } .stat dd { font-size: 18px; } }
 </style>
 </head>
@@ -133,7 +139,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   <footer id="footer"></footer>
 </div>
 
-<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"2","lp":21,"wins":143,"losses":140,"score":1821,"main":"Fiora","icon":"img/Fiora.png"},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":28,"wins":280,"losses":269,"score":1828,"main":"Lissandra","icon":"img/Lissandra.png"}],"history":[{"t":"2026-10-27T05:23:19+00:00","s":[1821,1828]}],"updated":"2026-10-27T05:30:10+00:00","goal":2000}</script>
+<script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"2","lp":21,"wins":143,"losses":140,"score":1821,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png"},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"2","lp":28,"wins":280,"losses":269,"score":1828,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png"}],"history":[{"t":"2026-10-27T05:23:19+00:00","s":[1821,1828]}],"updated":"2026-10-27T05:30:10+00:00","goal":2000}</script>
 
 <script>
 (function () {
@@ -181,7 +187,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
         <div class="ticks">${ticks.slice(1, -1).map(s => `<div class="tick" style="left:${pct(s)}%"></div>`).join("")}</div>
         <div class="fill" data-w="${pct(p.score)}" style="width:0;background:linear-gradient(90deg, transparent, ${SIDE[p.side]})"></div>
         <div class="finish"></div>
-        <div class="tip" data-l="${pct(p.score)}" style="left:0;background-image:url('${esc(p.icon || "")}');border-color:${SIDE[p.side]}"></div>
+        <div class="tip" data-l="${pct(p.score)}" style="left:0"><img src="${esc(p.photo || p.icon || "")}" alt=""></div>
       </div>
     </div>`).join("") + `
     <div class="scale" aria-hidden="true">${ticks.map(s => `<span class="${s === GOAL ? "goal" : ""}" style="left:${pct(s)}%">${s === GOAL ? "EMERALD" : divLabel(s)}</span>`).join("")}</div>`;
@@ -196,7 +202,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     const isLead = gap > 0 && p === lead;
     return `<article class="frame card" style="--side:${SIDE[p.side]}">
       <div class="who">
-        ${p.icon ? `<img src="${esc(p.icon)}" alt="${esc(p.main || "")}">` : ""}
+        <div class="face"><img src="${esc(p.photo || p.icon || "")}" alt="${esc(p.name)}">${p.photo && p.icon ? `<img class="champ" src="${esc(p.icon)}" alt="${esc(p.main || "")}" title="${esc(p.main || "")}">` : ""}</div>
         <div style="min-width:0"><div class="side">${p.side} side${p.main ? " · " + esc(p.main) + " main" : ""}</div>
         <div class="name">${esc(p.name)}<span style="color:var(--muted);font-size:.7em"> #${esc(p.tag)}</span></div></div>
         ${isLead ? `<span class="leader-chip">Leading</span>` : ""}
