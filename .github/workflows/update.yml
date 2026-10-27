@@ -39,7 +39,6 @@ jobs:
         id: predict
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          LP_CHANGED: ${{ steps.scrape.outputs.changed }}
           FORCE_PREDICTION: ${{ inputs.force_prediction }}
         run: |
           pip install -q anthropic

@@ -6,7 +6,7 @@ import anthropic
 
 from update import DATA_RE, PAGE
 
-MIN_HOURS = 12          # at most two predictions a day, even if LP moves every game
+MIN_HOURS = 6           # at most four predictions a day, and only when LP moved since the last one
 
 
 def main():
@@ -20,8 +20,9 @@ def main():
     prev = data.get("prediction")
     force = "--force" in sys.argv or os.environ.get("FORCE_PREDICTION") == "true"
     if prev and not force:
-        if os.environ.get("LP_CHANGED") == "false":
-            print("no LP change; keeping previous prediction")
+        scores = [p["score"] for p in data["players"]]
+        if prev.get("scores") == scores:
+            print("no LP change since the last prediction; keeping it")
             return
         age = now - datetime.datetime.fromisoformat(prev["t"])
         if age < datetime.timedelta(hours=MIN_HOURS):
@@ -74,6 +75,7 @@ def main():
     pred = json.loads(next(b.text for b in resp.content if b.type == "text"))
     pred["confidence"] = max(50, min(95, int(pred["confidence"])))
     pred["t"] = now.isoformat(timespec="seconds")
+    pred["scores"] = [p["score"] for p in data["players"]]
     if prev:
         data["prev_prediction"] = prev     # keep exactly one earlier call
     data["prediction"] = pred
