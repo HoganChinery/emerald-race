@@ -94,9 +94,10 @@ def main():
     for p in data["players"]:
         r, ophist = scrape(p["slug"])
         r["source"] = "op.gg"
-        if os.environ.get("RIOT_API_KEY"):
+        riot_key = os.environ.get("RIOT_API_KEY", "").strip()   # pasted secrets often carry a newline
+        if riot_key:
             try:
-                live = riot_rank(p, os.environ["RIOT_API_KEY"])
+                live = riot_rank(p, riot_key)
                 if live:
                     r.update(live, source="riot")
             except Exception as e:
