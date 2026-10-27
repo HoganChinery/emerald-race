@@ -443,9 +443,10 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   // When one side's count gets absurd, the page notices
   function sus() {
     if (!counts) return "";
-    const [a, b] = P.map(p => counts[p.vote] || 0), big = a > b ? P[0] : P[1], hi = Math.max(a, b), lo = Math.min(a, b);
+    const [a, b] = P.map(p => counts[p.vote] || 0), big = a > b ? P[0] : P[1], small = big === P[0] ? P[1] : P[0];
+    const hi = Math.max(a, b), lo = Math.min(a, b);
     if (hi < 1000 || hi < lo * 100) return "";
-    return `<p class="small" style="margin:10px 0 0;color:#e8b54a">⚠ Vanguard flagged ${(hi - lo).toLocaleString()} of ${esc(big.name)}'s votes as coming from one incognito window. Investigation ongoing.</p>`;
+    return `<p class="small" style="margin:10px 0 0;color:#e8b54a">⚠ Vanguard caught ${esc(small.name)} voting for himself in incognito. Penalty: ${(hi - lo).toLocaleString()} votes awarded to ${esc(big.name)}.</p>`;
   }
   async function loadVotes() {
     try {
