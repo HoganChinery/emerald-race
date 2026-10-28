@@ -877,6 +877,14 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     setTimeout(hush, 12500);
   }
   exchange(); setInterval(exchange, 14000);
+  // An open tab never re-reads its data, so check for a newer update every few minutes and reload when one lands.
+  setInterval(async () => {
+    try {
+      const html = await (await fetch(location.pathname + "?t=" + Date.now(), { cache: "no-store" })).text();
+      const m = html.match(/"updated":"([^"]+)"/);
+      if (m && data.updated && m[1] > data.updated) location.reload();
+    } catch (e) { /* offline; try again next time */ }
+  }, 3 * 60 * 1000);
 
   $("footer").insertAdjacentHTML("beforeend", `<p class="legal">First to Emerald isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>`);
 })();
