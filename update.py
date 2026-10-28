@@ -152,8 +152,8 @@ def main():
             if (r["score"], r["wins"], r["losses"]) != (g.get("score"), g.get("wins"), g.get("losses")) or new_games:
                 changed = True
             g.update(r)
-            if g["score"] >= 1200 and not g.get("gold_at"):   # Scoundrel Derby: first to Gold wins
-                g["gold_at"] = now
+            if g["tier"] == "Challenger" and not g.get("chall_at"):   # Scoundrel Derby: first to Challenger wins
+                g["chall_at"] = now
             print(f'guest {g["name"]}: {g["tier"]} {g["div"] or ""} {g["lp"]} LP via {g["source"]}')
         except Exception as e:
             print(f"guest {g['name']} failed ({e}); keeping last known")

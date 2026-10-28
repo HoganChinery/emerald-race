@@ -120,7 +120,7 @@ h1 {
 .crew { margin: -8px 0 4px; font: 700 13px var(--display); letter-spacing: .14em; text-transform: uppercase; background: linear-gradient(180deg, #f2f5f8, #9aa6b2); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .crew span { font: 500 13px var(--body); letter-spacing: .04em; text-transform: none; -webkit-text-fill-color: var(--muted); }
 
-/* Scoundrel Derby: each Silver Scoundrel gallops toward Gold. Position = progress from Silver IV 0 LP to Gold IV. */
+/* Scoundrel Derby: each Silver Scoundrel gallops toward Challenger (yes, really). Position = progress from Silver IV 0 LP to roughly the Challenger cutoff. */
 .derby { --hw: 124px; position: relative; margin: 6px 0 18px; border: 1px solid #5f6b78; overflow: hidden;
   background: linear-gradient(180deg, #0f2a40 0, #1d4a5c 34px, #0f2a40 35px); }
 .derby .hills { height: 38px; position: relative; }
@@ -345,7 +345,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
   <section class="frame" aria-labelledby="tales-h" id="tales-box" hidden>
     <h2 id="tales-h">Tales from across the Rift</h2>
-    <div class="crew">⚔ The Silver Scoundrels <span>· the derby to Gold</span></div>
+    <div class="crew">⚔ The Silver Scoundrels <span>· the derby to Challenger</span></div>
     <div class="derby" id="derby" role="img"></div>
     <div class="tales" id="tales"></div>
   </section>
@@ -447,7 +447,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     "Not hardstuck. Building momentum.",
     "Scoundrels don't lose. They gather intel.",
     "{rank} is just the opening act.",
-    "One more win streak and Gold won't know what hit it.",
+    "One more win streak and Challenger won't know what hit it.",
     "{wr}% win rate with teammates like these? Heroic.",
     "Every loss was the team's fault. Every win was all skill.",
     "Card-carrying member of the most feared crew in OCE Silver.",
@@ -458,7 +458,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   const NAMED = { "thebuntos": ["Malzahar's voidlings answer to one master.", "The Void whispers, and it whispers thebuntos."],
                   "Cameron Bot": ["The name's a decoy. The plays are real.", "Bot by name, menace by nature."],
                   "idontknowbasics": ["Doesn't know the basics. Doesn't need them. Pure instinct.", "Skipped the basics and went straight to the outplays."],
-                  "MakeMeSqert": ["{lp} LP in {rank}. Gold is shaking.", "Leading the Scoundrels' charge on Gold."] };
+                  "MakeMeSqert": ["{lp} LP in {rank}. Challenger is shaking.", "Leading the Scoundrels' charge on Challenger."] };
   const tFill = (t, g) => {
     const r = g.recent || [], games = g.wins + g.losses;
     return t.replace(/\{rank\}/g, g.tier + (g.div ? " " + ROM[g.div] : "")).replace(/\{wr\}/g, games ? Math.round(g.wins / games * 100) : 0)
@@ -473,10 +473,11 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     return tFill(b.pop(), g);
   }; })();
   const guests = (data.guests || []).filter(g => g.tier).sort((a, b) => b.score - a.score);
-  // Scoundrel Derby: Silver IV 0 LP (score 800) is the gate, Gold IV (1200) the finish.
+  // Scoundrel Derby: Silver IV 0 LP (score 800) is the gate, Challenger the finish (~900 LP into Master+, score 3700).
   const SILKS = ["#e84057", "#3fa7e0", "#f0c96b", "#2bd18b", "#b77bf0", "#ff8a3d"];
   const COATS = [["#6b3a1f", "#2a160b"], ["#1c1c22", "#0a0a0d"], ["#8a5a2b", "#3a2412"], ["#d9d2c5", "#8d857a"], ["#4a2a18", "#1a0d06"], ["#5a5f66", "#24272b"]];
-  const GATE = 800, GOLD = 1200;
+  const GATE = 800, CHALL = 3700;
+  const TIERMARKS = [["GOLD", 1200], ["PLAT", 1600], ["EMERALD", 2000], ["DIAMOND", 2400], ["MASTER", 2800]];
   (data.guests || []).forEach((g, i) => { g._num = i + 1; g._silk = SILKS[i % SILKS.length]; g._coat = COATS[i % COATS.length]; });
   const horse = g => {
     const [coat, dark] = g._coat, id = "hd" + g._num;
@@ -504,26 +505,26 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   };
   const derby = gs => {
     const ranked = gs.filter(g => g.tier !== "Unranked");
-    const done = ranked.filter(g => g.score >= GOLD).sort((a, b) => (a.gold_at || "9").localeCompare(b.gold_at || "9"));
+    const done = ranked.filter(g => g.tier === "Challenger").sort((a, b) => (a.chall_at || "9").localeCompare(b.chall_at || "9"));
     const best = Math.max(...ranked.map(g => g.score));
-    const marks = ["III", "II", "I"].map((d, k) => `<div class="mk d" style="left:calc(var(--hw) * .93 + (100% - var(--hw)) * ${(k + 1) / 4})"><span>S ${d}</span></div>`).join("");
+    const marks = TIERMARKS.map(([n, s]) => `<div class="mk d" style="left:calc(var(--hw) * .93 + (100% - var(--hw)) * ${(s - GATE) / (CHALL - GATE)})"><span>${n}</span></div>`).join("");
     const lanes = (data.guests || []).map(g => {
-      const x = Math.max(0, Math.min(1, (g.score - GATE) / (GOLD - GATE)));
-      const toGo = Math.max(0, GOLD - g.score);
+      const x = g.tier === "Challenger" ? 1 : Math.max(0, Math.min(.98, (g.score - GATE) / (CHALL - GATE)));
+      const toGo = Math.max(0, CHALL - g.score).toLocaleString();
       const short = g.tier === "Unranked" ? "unranked" : `${g.tier[0]}${g.div ? ROM[g.div] : ""} ${g.lp} LP`;
       const lead = g.score === best && !done.length;
       return `<div class="lane"><div class="runner${lead ? " lead" : ""}${x < .45 ? " flip" : ""}${x >= 1 ? " done" : ""}" style="--x:${x};--silk:${g._silk}">
         ${x < 1 ? '<span class="dust"></span><span class="dust"></span>' : ""}${horse(g)}
-        <div class="tag">${esc(g.name)} <small>· ${short}<span class="tg">${x < 1 ? ` · ${toGo} to Gold` : " · GOLD"}</span></small></div></div></div>`;
+        <div class="tag">${esc(g.name)} <small>· ${short}<span class="tg">${x < 1 ? ` · ~${toGo} LP to Challenger` : " · CHALLENGER"}</span></small></div></div></div>`;
     }).join("");
     const call = done.length ? `<div class="call">🏆 ${esc(done[0].name)} wins the derby!</div>` : "";
-    $("derby").setAttribute("aria-label", "Derby to Gold: " + gs.map(g => `${g.name} ${Math.max(0, GOLD - g.score)} LP from Gold`).join(", "));
+    $("derby").setAttribute("aria-label", "Derby to Challenger: " + gs.map(g => `${g.name} about ${Math.max(0, CHALL - g.score)} LP from Challenger`).join(", "));
     $("derby").innerHTML = `<div class="hills"><svg viewBox="0 0 400 38" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 38 L0 22 C30 10 60 16 90 20 C130 6 170 8 210 18 C250 4 300 10 340 16 C365 8 385 12 400 14 L400 38 Z" fill="#1d3b2c"/>
         <path d="M0 38 L0 28 C40 20 80 26 120 28 C170 18 220 22 260 28 C310 20 360 24 400 26 L400 38 Z" fill="#244a33"/>
         <path d="M0 38 L0 34 L400 34 L400 38 Z" fill="#e9edf1"/></svg></div>
       ${lanes}<div class="marks"><div class="mk start" style="left:calc(var(--hw) * .93)"><span>SILVER IV</span></div>${marks}</div>
-      <div class="finish"><span>GOLD ⟶</span></div>${call}`;
+      <div class="finish"><span>CHALLENGER ⟶</span></div>${call}`;
   };
   if (guests.length) {
     $("tales-box").hidden = false;
