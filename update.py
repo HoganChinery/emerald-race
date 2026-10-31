@@ -144,6 +144,14 @@ def main():
             hist[now] = p["score"]
         changed = changed or moved or new_games or len(hist) != before
         p["hist"] = [{"t": t, "s": s} for t, s in sorted(hist.items())][-300:]
+        if p["score"] >= data["goal"] and not p.get("emerald_at"):
+            p["emerald_at"] = now
+    # first to Emerald is crowned for good, even if they demote afterwards
+    if not data.get("champion"):
+        done = [p for p in data["players"] if p.get("emerald_at")]
+        if done:
+            data["champion"] = min(done, key=lambda p: p["emerald_at"])["name"]
+            changed = True
     # guests: other players shown in the "Tales from across the Rift" box, rank and recent games only
     for g in data.get("guests", []):
         try:

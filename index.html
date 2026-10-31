@@ -298,6 +298,53 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 .legal { max-width: 70ch; margin: 10px auto 0; font-size: 12px; opacity: .75; text-wrap: balance; }
 
 .winner { text-align: center; font: 800 clamp(22px, 5vw, 34px) var(--display); color: var(--emerald); text-shadow: 0 0 18px rgba(43,209,139,.5); }
+.winner button { display: block; margin: 10px auto 0; font: 600 14px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); background: none; border: 1px solid var(--gold-dim); border-radius: 999px; padding: 6px 16px; cursor: pointer; }
+.winner button:hover { border-color: var(--gold); }
+
+/* Victory takeover: shown on every visit once someone hits Emerald. Fireworks + confetti canvas behind, winner render crowned in the middle. */
+.fete { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; overflow: hidden; padding: 16px;
+  background: radial-gradient(circle at 50% 45%, rgba(43,209,139,.4) 0%, transparent 55%), rgba(2,6,12,.97); animation: fete-in .5s ease-out both; }
+.fete[hidden] { display: none; }
+.fete.out { animation: fete-out .6s ease-in forwards; }
+.fete .rays { position: absolute; left: 50%; top: 45%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; opacity: .35;
+  background: repeating-conic-gradient(from 0deg, rgba(43,209,139,.55) 0deg 6deg, transparent 6deg 18deg); animation: spin 40s linear infinite;
+  -webkit-mask: radial-gradient(circle, #000 0%, transparent 45%); mask: radial-gradient(circle, #000 0%, transparent 45%); }
+.fete canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.fete .flash { position: absolute; inset: 0; background: #d9ffee; animation: flash .9s ease-out forwards; pointer-events: none; }
+.fete .stage { position: relative; text-align: center; display: grid; justify-items: center; gap: 4px; max-width: 900px; animation: shake .5s .25s 2; }
+.fete .eyebrow { font: 700 clamp(12px, 2.4vw, 16px) var(--body); letter-spacing: .35em; color: var(--gold); text-transform: uppercase; animation: rise .6s .5s both; }
+.fete .champ { position: relative; margin-top: clamp(44px, 9vh, 90px); height: min(44vh, 400px); aspect-ratio: 3 / 4; display: grid; place-items: end center; animation: slam .9s .15s cubic-bezier(.2,1.6,.4,1) both; }
+.fete .champ img.art { max-height: 100%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 0 22px var(--emerald)) drop-shadow(0 0 60px rgba(43,209,139,.6)); animation: bob 2.4s 1.2s ease-in-out infinite; }
+.fete .crown { position: absolute; bottom: 100%; margin-bottom: -4%; left: 50%; width: 28%; transform: translateX(-50%) rotate(-8deg); filter: drop-shadow(0 0 14px rgba(240,201,107,.9)); animation: crown 1s 1s cubic-bezier(.3,1.5,.5,1) both, glint 2.4s 2s ease-in-out infinite; }
+.fete .gem { position: absolute; bottom: 4%; width: 22%; aspect-ratio: 1; clip-path: polygon(50% 0, 100% 30%, 100% 70%, 50% 100%, 0 70%, 0 30%);
+  background: linear-gradient(135deg, #b8ffe0 0%, #2bd18b 40%, #0b7a4c 70%, #2bd18b 100%); box-shadow: 0 0 30px var(--emerald); animation: gem 3s linear infinite; opacity: .9; mix-blend-mode: screen; }
+.fete h2 { margin: 6px 0 0; font: 800 clamp(38px, 10vw, 96px)/.95 var(--display); letter-spacing: .02em; color: #fff; text-transform: uppercase;
+  text-shadow: 0 0 18px var(--who), 0 0 48px var(--who), 0 4px 0 rgba(0,0,0,.6); animation: rise .7s .7s both, pulse 1.6s 1.6s ease-in-out infinite; }
+.fete .is { font: 800 clamp(20px, 5vw, 44px) var(--display); color: var(--emerald); letter-spacing: .12em; text-transform: uppercase; text-shadow: 0 0 20px rgba(43,209,139,.8); animation: rise .7s .95s both; }
+.fete .sub { color: var(--text); font-size: clamp(14px, 2.6vw, 18px); max-width: 52ch; text-wrap: balance; animation: rise .7s 1.2s both; }
+.fete .go { margin-top: 14px; font: 800 clamp(14px, 2.6vw, 17px) var(--display); letter-spacing: .14em; color: #071a12; background: linear-gradient(#7affc4, #2bd18b); border: 0; border-radius: 999px; padding: 12px 28px; cursor: pointer;
+  box-shadow: 0 0 0 2px #f0c96b, 0 0 28px rgba(43,209,139,.8); animation: rise .7s 1.6s both; }
+.fete .go:hover { filter: brightness(1.1); }
+.fete .loser { position: absolute; right: 18px; bottom: 18px; display: grid; justify-items: center; gap: 4px; color: var(--muted); font-size: 13px; transform: rotate(6deg); animation: rise .7s 2.2s both; }
+.fete .loser img { width: clamp(64px, 12vw, 110px); filter: grayscale(1) brightness(.8) drop-shadow(0 0 2px #f0e6d2); animation: tremble .18s linear infinite; }
+.fete .loser .tear { position: absolute; top: 38%; width: 6px; height: 10px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #8fd3ff; animation: tear 1s linear infinite; }
+.fete .loser .tear.l { left: 34%; } .fete .loser .tear.r { right: 34%; animation-delay: .5s; }
+@keyframes fete-in { from { opacity: 0; } }
+@keyframes fete-out { to { opacity: 0; transform: scale(1.05); } }
+@keyframes flash { from { opacity: .95; } to { opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shake { 0%,100% { transform: none; } 20% { transform: translate(-8px, 4px); } 40% { transform: translate(7px, -5px); } 60% { transform: translate(-5px, -3px); } 80% { transform: translate(4px, 5px); } }
+@keyframes slam { from { transform: scale(3.2) rotate(-12deg); opacity: 0; } 60% { opacity: 1; } }
+@keyframes rise { from { transform: translateY(24px); opacity: 0; } }
+@keyframes bob { 50% { transform: translateY(-10px); } }
+@keyframes crown { from { transform: translate(-50%, -260%) rotate(-40deg); opacity: 0; } }
+@keyframes glint { 50% { filter: drop-shadow(0 0 26px #fff3c4) brightness(1.25); } }
+@keyframes gem { to { filter: hue-rotate(25deg) brightness(1.2); } }
+@keyframes pulse { 50% { transform: scale(1.04); } }
+@keyframes tremble { 25% { transform: translateX(-1px); } 75% { transform: translateX(1px); } }
+@keyframes tear { from { transform: translateY(0); opacity: 1; } to { transform: translateY(40px); opacity: 0; } }
+@media (max-width: 600px) { .fete .loser { right: 8px; bottom: 8px; font-size: 11px; } .fete .champ { height: 38vh; } }
+@media (prefers-reduced-motion: reduce) { .fete, .fete *, .fete .stage { animation: none !important; } .fete .flash, .fete .rays { display: none; } }
 
 @media (prefers-reduced-motion: reduce) { .bar .fill, .bar .tip { transition: none; } .bar .tip img { animation: none; } }
 @media (max-width: 480px) { .frame { padding: 18px 14px; } .stat dd { font-size: 18px; } }
@@ -360,6 +407,29 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
 
 <script id="race-data" type="application/json">{"players":[{"name":"Syrio Forel","tag":"OC","slug":"Syrio%20Forel-OC","side":"blue","tier":"Platinum","div":"4","lp":47,"wins":150,"losses":157,"score":1647,"main":"Fiora","icon":"img/Fiora.png","photo":"img/syrio.png","hist":[{"t":"2026-10-19T07:37:03+00:00","s":1635},{"t":"2026-10-20T13:04:01+00:00","s":1613},{"t":"2026-10-22T15:12:49+00:00","s":1649},{"t":"2026-10-23T15:03:55+00:00","s":1713},{"t":"2026-10-25T12:37:04+00:00","s":1777},{"t":"2026-10-25T16:53:21+00:00","s":1795},{"t":"2026-10-26T15:32:47+00:00","s":1802},{"t":"2026-10-27T05:23:19+00:00","s":1821},{"t":"2026-10-27T06:22:08+00:00","s":1778},{"t":"2026-10-27T10:52:57+00:00","s":1736},{"t":"2026-10-27T13:32:28+00:00","s":1715},{"t":"2026-10-27T14:05:17+00:00","s":1734},{"t":"2026-10-27T14:30:39+00:00","s":1734},{"t":"2026-10-27T15:30:35+00:00","s":1712},{"t":"2026-10-28T04:30:58+00:00","s":1712},{"t":"2026-10-28T06:27:06+00:00","s":1730},{"t":"2026-10-28T11:45:23+00:00","s":1730},{"t":"2026-10-28T12:30:36+00:00","s":1747},{"t":"2026-10-28T13:00:48+00:00","s":1724},{"t":"2026-10-28T15:00:48+00:00","s":1701},{"t":"2026-10-28T15:45:25+00:00","s":1678},{"t":"2026-10-29T14:00:47+00:00","s":1654},{"t":"2026-10-29T14:45:25+00:00","s":1670},{"t":"2026-10-29T14:46:04+00:00","s":1670},{"t":"2026-10-29T15:30:35+00:00","s":1647},{"t":"2026-10-29T16:30:36+00:00","s":1623},{"t":"2026-10-30T15:29:57+00:00","s":1600},{"t":"2026-10-30T15:30:37+00:00","s":1600},{"t":"2026-10-30T15:45:26+00:00","s":1600},{"t":"2026-10-30T16:30:33+00:00","s":1615},{"t":"2026-10-30T17:00:45+00:00","s":1647}],"champs":[{"name":"Fiora","wins":181,"losses":165},{"name":"Ezreal","wins":4,"losses":9},{"name":"Master Yi","wins":2,"losses":0},{"name":"Garen","wins":2,"losses":0},{"name":"Shyvana","wins":1,"losses":1}],"vote":"syrio","source":"riot","puuid":"dVt4ywpkT9Jl8vPygXR5GOG5fpButqmFVf0DoMEbqSO9F-pJPrVajjdzsHuORQ_f4aT3jP4yX_2qSA","recent":[{"id":"OC1_714045024","win":true,"champ":"Nautilus","k":2,"d":7,"a":14,"end":1793379631705,"dur":1488,"remake":false,"icon":"img/Nautilus.png"},{"id":"OC1_714042665","win":true,"champ":"Fiora","k":22,"d":7,"a":8,"end":1793377260108,"dur":1825,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_714043404","win":false,"champ":"Fiora","k":0,"d":1,"a":0,"end":1793374787429,"dur":354,"remake":false,"icon":"img/Fiora.png"},{"id":"OC1_714042090","win":false,"champ":"Illaoi","k":1,"d":8,"a":1,"end":1793374050731,"dur":1717,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_713967008","win":false,"champ":"Fiora","k":7,"d":10,"a":9,"end":1793290754859,"dur":1934,"remake":false,"icon":"img/Fiora.png"}]},{"name":"AD Curry","tag":"OC","slug":"AD%20Curry-OC","side":"red","tier":"Platinum","div":"1","lp":83,"wins":309,"losses":292,"score":1983,"main":"Lissandra","icon":"img/Lissandra.png","photo":"img/curry.png","hist":[{"t":"2026-10-15T16:18:49+00:00","s":1701},{"t":"2026-10-16T22:54:38+00:00","s":1710},{"t":"2026-10-18T11:33:04+00:00","s":1701},{"t":"2026-10-19T12:12:57+00:00","s":1712},{"t":"2026-10-21T20:49:01+00:00","s":1707},{"t":"2026-10-22T16:58:17+00:00","s":1767},{"t":"2026-10-23T18:06:23+00:00","s":1706},{"t":"2026-10-25T12:30:18+00:00","s":1775},{"t":"2026-10-26T13:28:38+00:00","s":1795},{"t":"2026-10-26T15:33:52+00:00","s":1775},{"t":"2026-10-27T05:23:19+00:00","s":1828},{"t":"2026-10-27T06:22:08+00:00","s":1870},{"t":"2026-10-27T07:23:26+00:00","s":1850},{"t":"2026-10-27T10:52:57+00:00","s":1830},{"t":"2026-10-27T12:00:46+00:00","s":1850},{"t":"2026-10-27T14:05:17+00:00","s":1830},{"t":"2026-10-27T14:30:39+00:00","s":1850},{"t":"2026-10-28T02:00:41+00:00","s":1870},{"t":"2026-10-28T03:00:44+00:00","s":1850},{"t":"2026-10-28T03:30:33+00:00","s":1830},{"t":"2026-10-28T04:00:42+00:00","s":1810},{"t":"2026-10-28T04:23:37+00:00","s":1810},{"t":"2026-10-28T04:30:34+00:00","s":1789},{"t":"2026-10-28T05:28:35+00:00","s":1768},{"t":"2026-10-28T06:00:43+00:00","s":1747},{"t":"2026-10-28T06:27:06+00:00","s":1726},{"t":"2026-10-28T07:00:45+00:00","s":1745},{"t":"2026-10-28T08:00:44+00:00","s":1724},{"t":"2026-10-28T08:15:23+00:00","s":1743},{"t":"2026-10-28T09:00:47+00:00","s":1762},{"t":"2026-10-28T10:45:24+00:00","s":1782},{"t":"2026-10-28T11:15:24+00:00","s":1822},{"t":"2026-10-28T15:00:48+00:00","s":1841},{"t":"2026-10-28T15:45:25+00:00","s":1821},{"t":"2026-10-28T23:45:22+00:00","s":1840},{"t":"2026-10-29T01:00:43+00:00","s":1820},{"t":"2026-10-29T01:30:31+00:00","s":1799},{"t":"2026-10-29T02:00:40+00:00","s":1778},{"t":"2026-10-29T02:02:11+00:00","s":1778},{"t":"2026-10-29T02:30:33+00:00","s":1797},{"t":"2026-10-29T03:00:45+00:00","s":1816},{"t":"2026-10-29T03:30:33+00:00","s":1836},{"t":"2026-10-29T04:15:21+00:00","s":1816},{"t":"2026-10-29T05:00:43+00:00","s":1795},{"t":"2026-10-29T06:00:43+00:00","s":1814},{"t":"2026-10-29T07:15:23+00:00","s":1834},{"t":"2026-10-29T13:30:38+00:00","s":1854},{"t":"2026-10-29T14:15:26+00:00","s":1874},{"t":"2026-10-29T15:30:35+00:00","s":1894},{"t":"2026-10-30T01:15:22+00:00","s":1915},{"t":"2026-10-30T12:15:23+00:00","s":1936},{"t":"2026-10-30T12:34:57+00:00","s":1936},{"t":"2026-10-30T16:00:09+00:00","s":1917},{"t":"2026-10-30T16:00:47+00:00","s":1917},{"t":"2026-10-30T16:45:22+00:00","s":1938},{"t":"2026-10-31T01:45:21+00:00","s":1959},{"t":"2026-10-31T02:00:38+00:00","s":1954},{"t":"2026-10-31T04:15:21+00:00","s":1975},{"t":"2026-10-31T05:00:45+00:00","s":1956},{"t":"2026-10-31T05:15:21+00:00","s":1937},{"t":"2026-10-31T06:00:37+00:00","s":1958},{"t":"2026-10-31T11:45:19+00:00","s":1939},{"t":"2026-10-31T12:30:30+00:00","s":1960},{"t":"2026-10-31T13:15:22+00:00","s":1941},{"t":"2026-10-31T14:00:39+00:00","s":1962},{"t":"2026-10-31T15:00:40+00:00","s":1983}],"champs":[{"name":"Lissandra","wins":203,"losses":151},{"name":"Aurora","wins":59,"losses":67},{"name":"Mel","wins":30,"losses":21},{"name":"Locke","wins":7,"losses":13},{"name":"Akshan","wins":6,"losses":12}],"vote":"curry","source":"riot","puuid":"Vdm2PttWQeK6g7m-qUUTWYxB0QZR6Hs898El2BROnfFxLedbKRyTvgPx0s5fQbQVIsretSPEFXMjiw","recent":[{"id":"OC1_714123655","win":true,"champ":"Lissandra","k":13,"d":2,"a":19,"end":1793458367759,"dur":1676,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_714117580","win":true,"champ":"Karma","k":4,"d":7,"a":9,"end":1793454586076,"dur":1846,"remake":false,"icon":"img/Karma.png"},{"id":"OC1_714113533","win":false,"champ":"Lissandra","k":15,"d":4,"a":10,"end":1793452308902,"dur":2350,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_714111338","win":true,"champ":"Karma","k":3,"d":6,"a":7,"end":1793449705269,"dur":2154,"remake":false,"icon":"img/Karma.png"},{"id":"OC1_714106009","win":false,"champ":"Lissandra","k":10,"d":6,"a":13,"end":1793447093396,"dur":2608,"remake":false,"icon":"img/Lissandra.png"}]}],"updated":"2026-10-31T15:00:40+00:00","goal":2000,"prediction":{"winner":"AD Curry","confidence":92,"headline":"The ice witch claws at the emerald gate while the duelist wanders.","reasoning":"On this Hallows' Eve the mists show the ice witch's servant a mere fifty-nine steps from the emerald gate. He has rattled its bars all night, flung back again and again, yet three clean victories will break the lock. Far below, the lone duelist dances with her single blade, three hundred and fifty-three steps from glory and sliding down the hill, so the Oracle suggests she parry the queue a little less and the ladder a little more.","eta":{"Syrio Forel":"When the duelist finally finds her riposte... ~3 weeks","AD Curry":"Before the jack-o'-lanterns gutter out... ~1-2 days"},"t":"2026-10-31T13:45:46+00:00","scores":[1647,1941]},"prev_prediction":{"winner":"AD Curry","confidence":92,"headline":"The ice witch stands at the gate while the duelist duels himself.","reasoning":"I see the frost queen's servant a mere forty-two steps from the emerald gate, two victories from glory, his Lissandra humming with old ice. Far below, the Fiora devotee wanders three hundred and fifty steps back, parrying ghosts and riposting his own LP into the void. Unless the gods of tilt bury Curry in a crypt of his own making, the race is already written in rime.","eta":{"Syrio Forel":"when Fiora finds her vitals... perhaps two weeks, if the mists are kind","AD Curry":"before the next moon rises, ~1 day"},"t":"2026-10-31T07:45:41+00:00","scores":[1647,1958]},"guests":[{"name":"thebuntos","tag":"OC","slug":"thebuntos-OC","puuid":"WnupiKs_MQXboJ_UO7iiA7zeni-WdCmPfHJIZMg-1moQD6Qu_kQI8632hHp0VaPaEWGnnOE6K0XJcg","tier":"Silver","div":"4","lp":83,"wins":353,"losses":355,"score":883,"main":"Malzahar","champs":[{"name":"Malzahar","wins":186,"losses":149},{"name":"Seraphine","wins":17,"losses":19},{"name":"Caitlyn","wins":15,"losses":20},{"name":"Illaoi","wins":15,"losses":17},{"name":"Shyvana","wins":14,"losses":11}],"source":"riot","recent":[{"id":"OC1_714090997","win":true,"champ":"Illaoi","k":6,"d":6,"a":4,"end":1793439702774,"dur":2011,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_714087340","win":false,"champ":"Illaoi","k":4,"d":6,"a":5,"end":1793434975114,"dur":1757,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_714073295","win":true,"champ":"Illaoi","k":10,"d":9,"a":7,"end":1793426321717,"dur":2414,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_714069812","win":true,"champ":"Illaoi","k":5,"d":2,"a":2,"end":1793423449154,"dur":944,"remake":false,"icon":"img/Illaoi.png"},{"id":"OC1_714068369","win":true,"champ":"Illaoi","k":9,"d":3,"a":1,"end":1793422017850,"dur":1479,"remake":false,"icon":"img/Illaoi.png"}],"icon":"img/Malzahar.png","vibe":"scoundrel"},{"name":"idontknowbasics","tag":"OC","slug":"idontknowbasics-OC","vibe":"scoundrel","puuid":"4ViTRTRjT9OkWXXLrUIptcCoPAfmyhVCwjPJB60h_pW0iLmgrJFy9EMO8jaBM5E0PvFJ4wrDNtVL_A","tier":"Silver","div":"3","lp":18,"wins":120,"losses":133,"score":918,"main":"Zac","champs":[{"name":"Zac","wins":28,"losses":23},{"name":"Mel","wins":17,"losses":17},{"name":"Volibear","wins":14,"losses":12},{"name":"Jhin","wins":10,"losses":16},{"name":"Varus","wins":8,"losses":7}],"source":"riot","recent":[{"id":"OC1_713993682","win":false,"champ":"Volibear","k":9,"d":7,"a":9,"end":1793345410751,"dur":1492,"remake":false,"icon":"img/Volibear.png"},{"id":"OC1_713991888","win":true,"champ":"Lillia","k":2,"d":0,"a":7,"end":1793343476434,"dur":1341,"remake":false,"icon":"img/Lillia.png"},{"id":"OC1_713987877","win":false,"champ":"Volibear","k":5,"d":8,"a":10,"end":1793340360260,"dur":1752,"remake":false,"icon":"img/Volibear.png"},{"id":"OC1_713985445","win":true,"champ":"Volibear","k":10,"d":5,"a":14,"end":1793337756527,"dur":1883,"remake":false,"icon":"img/Volibear.png"},{"id":"OC1_713890834","win":true,"champ":"Volibear","k":13,"d":2,"a":5,"end":1793201666900,"dur":1738,"remake":false,"icon":"img/Volibear.png"}],"icon":"img/Zac.png"},{"name":"MakeMeSqert","tag":"69691","slug":"MakeMeSqert-69691","vibe":"scoundrel","puuid":"tKRpB_oRfYbkqLIzHP4IJQVn_m_hs5_lICvpw4HTXyk0DcEVlwV1i3iS62aiRCeMcNwPLxSfoqresQ","tier":"Gold","div":"4","lp":54,"wins":131,"losses":126,"score":1254,"main":"Nami","champs":[{"name":"Nami","wins":32,"losses":15},{"name":"Nautilus","wins":21,"losses":26},{"name":"Pantheon","wins":21,"losses":18},{"name":"Galio","wins":10,"losses":8},{"name":"Swain","wins":6,"losses":6}],"source":"riot","recent":[{"id":"OC1_714074829","win":false,"champ":"Alistar","k":2,"d":12,"a":4,"end":1793427583897,"dur":1910,"remake":false,"icon":"img/Alistar.png"},{"id":"OC1_714018212","win":false,"champ":"Nami","k":0,"d":6,"a":4,"end":1793359165600,"dur":1449,"remake":false,"icon":"img/Nami.png"},{"id":"OC1_713987877","win":false,"champ":"Lissandra","k":7,"d":5,"a":6,"end":1793340360260,"dur":1752,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713985445","win":true,"champ":"Lissandra","k":9,"d":4,"a":16,"end":1793337756527,"dur":1883,"remake":false,"icon":"img/Lissandra.png"},{"id":"OC1_713980957","win":true,"champ":"Nami","k":3,"d":3,"a":8,"end":1793334559402,"dur":1001,"remake":false,"icon":"img/Nami.png"}],"icon":"img/Nami.png","gold_at":"2026-10-27T15:30:35+00:00"},{"name":"Cameron Bot","tag":"Sugma","slug":"Cameron%20Bot-Sugma","vibe":"scoundrel","puuid":"zlcDPCrp3i9uJSuc9rQaSYUGWRRPlxvKr9qeKhFtN7oQ0Mv9lil2n0mL6_PpWB-3HrwKU1z3OKBh-Q","tier":"Silver","div":"4","lp":59,"wins":109,"losses":115,"score":859,"main":"Garen","champs":[{"name":"Garen","wins":12,"losses":18},{"name":"Heimerdinger","wins":17,"losses":9},{"name":"Tryndamere","wins":10,"losses":9},{"name":"Volibear","wins":7,"losses":12},{"name":"Malzahar","wins":9,"losses":9}],"source":"riot","recent":[{"id":"OC1_714081497","win":false,"champ":"Morgana","k":3,"d":8,"a":15,"end":1793432410416,"dur":2017,"remake":false,"icon":"img/Morgana.png"},{"id":"OC1_714068923","win":false,"champ":"Leona","k":1,"d":8,"a":14,"end":1793424007810,"dur":1830,"remake":false,"icon":"img/Leona.png"},{"id":"OC1_713933323","win":true,"champ":"Vi","k":10,"d":5,"a":15,"end":1793267511319,"dur":1713,"remake":false,"icon":"img/Vi.png"},{"id":"OC1_713921701","win":false,"champ":"Kayn","k":3,"d":5,"a":3,"end":1793260273540,"dur":1568,"remake":false,"icon":"img/Kayn.png"},{"id":"OC1_713917075","win":true,"champ":"Ryze","k":7,"d":4,"a":8,"end":1793254895325,"dur":1723,"remake":false,"icon":"img/Ryze.png"}],"icon":"img/Garen.png"},{"name":"B0Y0","tag":"OC","slug":"B0Y0-OC","vibe":"scoundrel","puuid":"l_oT98bomIB4COpefiAJ2kd20Nu5sl4q8TCqSeVErzONlkS2RDxf0kVTCjPgQGn3FgsGeDsJdqdy8A","tier":"Platinum","div":"4","lp":69,"wins":53,"losses":59,"score":1669,"main":"Xayah","champs":[{"name":"Xayah","wins":11,"losses":5},{"name":"Shen","wins":4,"losses":5},{"name":"Nautilus","wins":5,"losses":2},{"name":"Lissandra","wins":4,"losses":3},{"name":"Morgana","wins":3,"losses":2}],"source":"riot","recent":[{"id":"OC1_714080795","win":true,"champ":"Xayah","k":11,"d":12,"a":15,"end":1793433220912,"dur":2506,"remake":false,"icon":"img/Xayah.png"},{"id":"OC1_714078709","win":false,"champ":"Leona","k":3,"d":5,"a":11,"end":1793430448764,"dur":2056,"remake":false,"icon":"img/Leona.png"},{"id":"OC1_713883427","win":true,"champ":"Xayah","k":12,"d":4,"a":4,"end":1793192469422,"dur":1671,"remake":false,"icon":"img/Xayah.png"},{"id":"OC1_713878522","win":true,"champ":"Xayah","k":8,"d":3,"a":11,"end":1793190421860,"dur":1785,"remake":false,"icon":"img/Xayah.png"},{"id":"OC1_713851202","win":false,"champ":"Xayah","k":5,"d":11,"a":4,"end":1793174043596,"dur":2210,"remake":false,"icon":"img/Xayah.png"}],"icon":"img/Xayah.png"},{"name":"Jonodread","tag":"OC","slug":"Jonodread-OC","vibe":"scoundrel","puuid":"c16r-hlwtS0WXlmp5qBLVTabusUjQzR3O2GEtoZlWvkRaHXM2VKU7h9GH4c_C1fXmaLTnNI35K--EA","tier":"Silver","div":"3","lp":24,"wins":22,"losses":20,"score":924,"main":"Kayn","champs":[{"name":"Kayn","wins":3,"losses":2},{"name":"Nautilus","wins":2,"losses":2},{"name":"Garen","wins":2,"losses":2},{"name":"Darius","wins":3,"losses":0},{"name":"Master Yi","wins":2,"losses":0}],"source":"riot","recent":[{"id":"OC1_713981186","win":true,"champ":"Chogath","k":12,"d":0,"a":5,"end":1793332311291,"dur":1813,"remake":false,"icon":"img/Chogath.png"},{"id":"OC1_713979486","win":false,"champ":"Nasus","k":1,"d":3,"a":3,"end":1793329823009,"dur":1389,"remake":false,"icon":"img/Nasus.png"},{"id":"OC1_713978195","win":false,"champ":"Hecarim","k":5,"d":9,"a":8,"end":1793327865687,"dur":1678,"remake":false,"icon":"img/Hecarim.png"},{"id":"OC1_713974833","win":true,"champ":"Chogath","k":7,"d":2,"a":7,"end":1793325881113,"dur":1715,"remake":false,"icon":"img/Chogath.png"},{"id":"OC1_713972764","win":false,"champ":"Nasus","k":6,"d":9,"a":8,"end":1793323805983,"dur":2049,"remake":false,"icon":"img/Nasus.png"}],"icon":"img/Kayn.png"},{"name":"serious banana","tag":"OC","slug":"serious%20banana-OC","vibe":"scoundrel","tier":"Gold","div":"3","lp":59,"wins":180,"losses":175,"score":1359,"main":"Tahm Kench","champs":[{"name":"Tahm Kench","wins":54,"losses":54},{"name":"Tristana","wins":27,"losses":26},{"name":"Poppy","wins":28,"losses":22},{"name":"Rell","wins":24,"losses":11},{"name":"Jhin","wins":11,"losses":11}],"source":"riot","icon":"img/TahmKench.png","puuid":"kVasshmBnpuv42a60n0a6PsvspzBHVZwlR69juhgGwna4TD22f8RNVe0xmEWyKJjWpa_ZR6rW3uLtQ","recent":[{"id":"OC1_714018090","win":true,"champ":"Rell","k":3,"d":0,"a":19,"end":1793359158801,"dur":1746,"remake":false,"icon":"img/Rell.png"},{"id":"OC1_714011132","win":true,"champ":"Rell","k":3,"d":6,"a":16,"end":1793355972546,"dur":2161,"remake":false,"icon":"img/Rell.png"},{"id":"OC1_714004405","win":true,"champ":"Rell","k":1,"d":10,"a":20,"end":1793353387377,"dur":2132,"remake":false,"icon":"img/Rell.png"},{"id":"OC1_713999080","win":true,"champ":"Rell","k":6,"d":15,"a":35,"end":1793348572912,"dur":2647,"remake":false,"icon":"img/Rell.png"},{"id":"OC1_713993682","win":false,"champ":"Poppy","k":1,"d":12,"a":11,"end":1793345410751,"dur":1492,"remake":false,"icon":"img/Poppy.png"}]}]}</script>
 
+<div class="fete" id="fete" role="dialog" aria-modal="true" aria-labelledby="fete-name" hidden>
+  <div class="rays" aria-hidden="true"></div>
+  <canvas aria-hidden="true"></canvas>
+  <div class="stage">
+    <div class="eyebrow">OCE Ranked · The race is over</div>
+    <div class="champ">
+      <div class="gem" aria-hidden="true"></div>
+      <img class="art" alt="">
+      <svg class="crown" viewBox="0 0 100 70" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1b8"/><stop offset=".5" stop-color="#f0c96b"/><stop offset="1" stop-color="#9c7a2e"/></linearGradient></defs>
+        <path d="M6 62 L2 18 L26 38 L50 4 L74 38 L98 18 L94 62 Z" fill="url(#cg)" stroke="#5a4316" stroke-width="2.5" stroke-linejoin="round"/>
+        <rect x="6" y="56" width="88" height="10" rx="2" fill="#c8aa6e" stroke="#5a4316" stroke-width="2.5"/>
+        <circle cx="50" cy="40" r="7" fill="#2bd18b" stroke="#0b5a38" stroke-width="2"/><circle cx="26" cy="46" r="4.5" fill="#e84057"/><circle cx="74" cy="46" r="4.5" fill="#3fa7e0"/>
+        <circle cx="2" cy="18" r="4" fill="#fff1b8"/><circle cx="50" cy="4" r="4" fill="#fff1b8"/><circle cx="98" cy="18" r="4" fill="#fff1b8"/></svg>
+    </div>
+    <h2 id="fete-name"></h2>
+    <div class="is">is Emerald</div>
+    <p class="sub" id="fete-sub"></p>
+    <button class="go" type="button">Enter the Rift</button>
+  </div>
+  <div class="loser" aria-hidden="true"><img alt=""><span class="tear l"></span><span class="tear r"></span><span id="fete-loser"></span></div>
+  <div class="flash" aria-hidden="true"></div>
+</div>
+
 <script>
 (function () {
   const data = JSON.parse(document.getElementById("race-data").textContent);
@@ -388,13 +458,105 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
   const sorted = [...P].sort((a, b) => b.score - a.score);
   const [lead, trail] = sorted;
   const gap = lead.score - trail.score;
-  const winner = P.find(p => p.score >= GOAL);
+  // update.py crowns the first to cross for good; ?celebrate previews the takeover with the current leader.
+  const preview = /[?&]celebrate\b/.test(location.search);
+  const winner = P.find(p => p.name === data.champion) || P.find(p => p.score >= GOAL) || (preview ? lead : null);
 
   // Verdict
   $("verdict").innerHTML = winner ? `<b style="color:${SIDE[winner.side]}">${esc(winner.name)}</b> made it to Emerald`
     : gap === 0 ? "Dead even. Every game counts."
     : `<b style="color:${SIDE[lead.side]}">${esc(lead.name)}</b> leads by <b>${gap} LP</b>`;
-  if (winner) { $("winner").hidden = false; $("winner").textContent = "Emerald reached. Race over."; }
+  if (winner) {
+    $("winner").hidden = false;
+    $("winner").innerHTML = `Emerald reached. Race over.<button type="button">Replay the celebration</button>`;
+    $("winner").querySelector("button").onclick = () => celebrate(winner);
+    celebrate(winner);
+  }
+
+  // Victory takeover: slam-in render + crown, fireworks for ~9s then confetti rain until dismissed.
+  function celebrate(w) {
+    const f = $("fete"), loser = P.find(p => p !== w);
+    const ART = { blue: "img/syrio-fiora.png", red: "img/curry-lissandra.png" };
+    const when = w.emerald_at ? new Date(w.emerald_at).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) : "today";
+    f.style.setProperty("--who", SIDE[w.side]);
+    f.querySelector(".art").src = ART[w.side] || w.photo;
+    f.querySelector(".art").alt = w.name;
+    $("fete-name").textContent = w.name;
+    $("fete-sub").textContent = `First to Emerald, crowned ${when}. ${loser.name} finished ${Math.max(0, GOAL - loser.score)} LP short in ${rankText(loser)}. Bow before your champion.`;
+    f.querySelector(".loser img").src = loser.photo;
+    $("fete-loser").textContent = `${loser.name} · ${rankText(loser)}`;
+    f.classList.remove("out"); f.hidden = false;
+    // restart the CSS entrance animations on replay
+    f.querySelectorAll("*").forEach(el => { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; });
+    const go = f.querySelector(".go");
+    go.focus({ preventScroll: true });
+    const stop = fireworks(f.querySelector("canvas"), w);
+    const close = () => {
+      if (f.classList.contains("out")) return;
+      f.classList.add("out"); document.removeEventListener("keydown", onKey);
+      setTimeout(() => { f.hidden = true; stop(); }, 600);
+    };
+    const onKey = e => { if (e.key === "Escape" || e.key === "Enter") close(); };
+    go.onclick = close; document.addEventListener("keydown", onKey);
+  }
+
+  function fireworks(cv, w) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
+    const ctx = cv.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1);
+    const side = w.side === "blue" ? "#3fa7e0" : "#e84057";
+    const COLORS = ["#2bd18b", "#7affc4", "#f0c96b", "#fff1b8", "#ffffff", side];
+    let W, H, parts = [], raf, t0 = performance.now(), nextBoom = 0;
+    const size = () => { W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr; };
+    size(); addEventListener("resize", size);
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const col = () => COLORS[(Math.random() * COLORS.length) | 0];
+    function boom(x, y, n) {
+      const c = col(), c2 = col();
+      for (let i = 0; i < n; i++) {
+        const a = Math.PI * 2 * i / n + rnd(-.05, .05), v = rnd(2, 9) * dpr;
+        parts.push({ k: "spark", x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rnd(50, 90), age: 0, c: i % 3 ? c : c2, r: rnd(1.5, 3) * dpr });
+      }
+    }
+    function confetti(n, fromSides) {
+      for (let i = 0; i < n; i++) {
+        const left = Math.random() < .5;
+        parts.push(fromSides
+          ? { k: "conf", x: left ? 0 : W, y: H * rnd(.6, 1), vx: (left ? 1 : -1) * rnd(6, 16) * dpr, vy: -rnd(10, 22) * dpr, life: 400, age: 0, c: col(), w: rnd(6, 12) * dpr, h: rnd(4, 8) * dpr, rot: rnd(0, 6), vr: rnd(-.3, .3) }
+          : { k: "conf", x: rnd(0, W), y: -20, vx: rnd(-1, 1) * dpr, vy: rnd(1, 3) * dpr, life: 600, age: 0, c: col(), w: rnd(6, 12) * dpr, h: rnd(4, 8) * dpr, rot: rnd(0, 6), vr: rnd(-.2, .2) });
+      }
+    }
+    confetti(260, true);
+    boom(W * .5, H * .4, 140);
+    function frame(now) {
+      const t = now - t0;
+      if (t < 9000 && now > nextBoom) {
+        boom(rnd(.1, .9) * W, rnd(.1, .55) * H, (rnd(60, 120)) | 0);
+        nextBoom = now + rnd(250, 700);
+        if (Math.random() < .25) confetti(60, true);
+      }
+      if (t > 1500 && Math.random() < .5) confetti(2, false);
+      ctx.globalCompositeOperation = "destination-out"; ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      parts = parts.filter(p => p.age++ < p.life && p.y < H + 40);
+      for (const p of parts) {
+        if (p.k === "spark") {
+          p.vx *= .96; p.vy = p.vy * .96 + .08 * dpr; p.x += p.vx; p.y += p.vy;
+          ctx.globalAlpha = 1 - p.age / p.life; ctx.fillStyle = p.c;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+        } else {
+          p.vx *= .985; p.vy = Math.min(p.vy + .25 * dpr, 3.5 * dpr); p.x += p.vx + Math.sin(p.age / 12) * .6 * dpr; p.y += p.vy; p.rot += p.vr;
+          ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.scale(1, Math.cos(p.age / 6));
+          ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+          ctx.globalCompositeOperation = "lighter";
+        }
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+    return () => { cancelAnimationFrame(raf); removeEventListener("resize", size); ctx.clearRect(0, 0, W, H); };
+  }
 
   // Track
   const ticks = [];

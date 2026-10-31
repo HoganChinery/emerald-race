@@ -16,6 +16,9 @@ def main():
     text = PAGE.read_text()
     m = DATA_RE.search(text)
     data = json.loads(m.group(2))
+    if data.get("champion"):
+        print(f'{data["champion"]} already reached Emerald; the Oracle rests')
+        return
     now = datetime.datetime.now(datetime.timezone.utc)
     prev = data.get("prediction")
     force = "--force" in sys.argv or os.environ.get("FORCE_PREDICTION") == "true"
